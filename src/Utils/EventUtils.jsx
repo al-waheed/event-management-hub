@@ -1,4 +1,6 @@
-export const formatError = (error) => {
+import { ErrorMessage } from "formik";
+
+export const formatApiError = (error) => {
   const cleaned = error
     .replace("Firebase:", "")
     .replace("auth/", "")
@@ -9,4 +11,14 @@ export const formatError = (error) => {
 
 export const generateCode = () => {
   return Math.floor(100000 + Math.random() * 900000).toString();
+};
+
+export const FormError = ({ name }) => {
+  return (
+    <ErrorMessage
+      name={name}
+      component="div"
+      className="text-red-500 text-[12px] mt-1"
+    />
+  );
 };

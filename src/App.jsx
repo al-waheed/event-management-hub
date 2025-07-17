@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import { auth } from "./Auth/Firebase";
 
 function App() {
-  const [user, setUser] = useState(null);
+  // const [user, setUser] = useState(null);
 
   // useEffect(() => {
   //   const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -15,13 +15,12 @@ function App() {
 
   //   return () => unsubscribe();
   // }, []);
+  // path="/"
+  //       element={user ? <Navigate to="/dashboard" /> : <LandingPage />}
 
   return (
     <Routes>
-      <Route
-        path="/"
-        element={user ? <Navigate to="/dashboard" /> : <LandingPage />}
-      />
+      <Route path="/" element={<LandingPage />} />
       <Route path="/dashboard" element={<Dashboard />} />
     </Routes>
   );

@@ -4,10 +4,9 @@ import * as Yup from "yup";
 import { auth, db } from "../Auth/Firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { toast } from "react-toastify";
-import { formatError, generateCode } from "../Utils/EventUtils";
+import { formatApiError, generateCode, FormError } from "../Utils/EventUtils";
 import { useNavigate } from "react-router-dom";
 import { useCountdownTimer } from "../hook/useCountdownTimer";
-import { FormError } from "../Utils/FormError";
 import { send } from "emailjs-com";
 
 const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
@@ -16,13 +15,14 @@ const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 
 const VerifyEmail = () => {
   const [error, setError] = useState("");
+  const [sendCode, setSendCode] = useState(false);
   const { formattedTime, isExpired, reset } = useCountdownTimer(300);
+  const ref = doc(db, "users", auth.currentUser.uid);
   const navigate = useNavigate();
 
   const emailVerification = async (values, { setSubmitting }) => {
     setError("");
     try {
-      const ref = doc(db, "users", auth.currentUser.uid);
       const snap = await getDoc(ref);
       const savedCode = snap.data().code;
 
@@ -47,7 +47,6 @@ const VerifyEmail = () => {
     if (isExpired) {
       const clearCode = async () => {
         try {
-          const ref = doc(db, "users", auth.currentUser.uid);
           await updateDoc(ref, { code: "" });
         } catch (e) {
           console.log(e);
@@ -57,16 +56,14 @@ const VerifyEmail = () => {
     }
   }, [isExpired]);
 
-  const handleResendCode = async () => {
+  const resendVerificationCode = async () => {
     setError("");
     try {
-      const ref = doc(db, "users", auth.currentUser.uid);
       const snap = await getDoc(ref);
       const userData = snap.data();
       const code = generateCode();
 
       await updateDoc(ref, { code });
-
       await send(
         serviceId,
         templateId,
@@ -80,7 +77,7 @@ const VerifyEmail = () => {
       toast.success("Verification code resent to your email!");
       reset();
     } catch (e) {
-      setError("Failed to resend code.");
+      setError("Failed to sendCode code.");
     }
   };
 
@@ -96,7 +93,7 @@ const VerifyEmail = () => {
         <Form className="space-y-4">
           {error && (
             <div className="text-red-500 text-sm mb-4">
-              {formatError(error)}
+              {formatApiError(error)}
             </div>
           )}
           <div>
@@ -116,12 +113,16 @@ const VerifyEmail = () => {
               <button
                 type="button"
                 className="w-full text-primary-600 hover:text-primary-700 focus:outline-none"
-                onClick={handleResendCode}
+                onClick={async () => {
+                  setSendCode(true);
+                  await resendVerificationCode();
+                  setSendCode(false);
+                }}
               >
-                Resend Code
+                {sendCode ? "Resending..." : "Resend Code"}
               </button>
             ) : (
-              `Resend code in: ${formattedTime}`
+              `Resend in: ${formattedTime}`
             )}
           </p>
         </Form>

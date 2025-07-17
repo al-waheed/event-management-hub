@@ -5,8 +5,7 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { setDoc, doc } from "firebase/firestore";
 import { auth, db } from "../Auth/Firebase";
 import { toast } from "react-toastify";
-import { formatError, generateCode } from "../Utils/EventUtils";
-import { FormError } from "../Utils/FormError";
+import { formatApiError , generateCode, FormError } from "../Utils/EventUtils";
 import { Timestamp } from "firebase/firestore";
 import { send } from "emailjs-com";
 
@@ -80,7 +79,7 @@ const SignUpForm = ({ onSwitch, setEmail }) => {
         <Form className="space-y-4">
           {error && (
             <div className="text-red-500 text-sm mb-4">
-              {formatError(error)}
+              {formatApiError (error)}
             </div>
           )}
           <div>

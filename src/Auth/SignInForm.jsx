@@ -6,8 +6,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { auth, db } from "../Auth/Firebase";
 import { toast } from "react-toastify";
-import { formatError, generateCode } from "../Utils/EventUtils";
-import { FormError } from "../Utils/FormError";
+import { formatApiError, generateCode, FormError } from "../Utils/EventUtils";
 import { send } from "emailjs-com";
 
 const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
@@ -55,7 +54,7 @@ const SignInForm = ({ onSwitch }) => {
           publicKey
         );
         onSwitch("verification");
-        toast.info("Please verify your email to continue.");
+        toast.info("Please enter code sent to your email for verification.");
         return;
       }
       navigate("/dashboard");
@@ -78,7 +77,7 @@ const SignInForm = ({ onSwitch }) => {
         <Form className="space-y-4">
           {error && (
             <div className="text-red-500 text-sm mb-4">
-              {formatError(error)}
+              {formatApiError(error)}
             </div>
           )}
           <div>
