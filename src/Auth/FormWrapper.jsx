@@ -40,7 +40,7 @@ const FormWrapper = () => {
           <SignInForm onSwitch={setStep} setEmail={setUserEmail} />
         )}
 
-        {step !== "verification" && (
+        {/* {step !== "verification" && (
           <div className="mt-6">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
@@ -72,7 +72,7 @@ const FormWrapper = () => {
               </motion.button>
             </div>
           </div>
-        )}
+        )} */}
 
         {step !== "verification" && (
           <div className="mt-6 text-center">

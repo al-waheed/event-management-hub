@@ -5,7 +5,13 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { setDoc, doc } from "firebase/firestore";
 import { auth, db } from "../Auth/Firebase";
 import { toast } from "react-toastify";
-import { formatApiError , generateCode, FormError } from "../Utils/EventUtils";
+import {
+  formatApiError,
+  generateCode,
+  FormError,
+  togglePassword,
+} from "../Utils/EventUtils";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Timestamp } from "firebase/firestore";
 import { send } from "emailjs-com";
 
@@ -29,6 +35,7 @@ const signUpSchema = Yup.object().shape({
 
 const SignUpForm = ({ onSwitch, setEmail }) => {
   const [error, setError] = useState("");
+  const { show, toggle } = togglePassword();
 
   const handleSignUpSubmit = async (values, { setSubmitting, resetForm }) => {
     setError("");
@@ -79,7 +86,7 @@ const SignUpForm = ({ onSwitch, setEmail }) => {
         <Form className="space-y-4">
           {error && (
             <div className="text-red-500 text-sm mb-4">
-              {formatApiError (error)}
+              {formatApiError(error)}
             </div>
           )}
           <div>
@@ -110,17 +117,24 @@ const SignUpForm = ({ onSwitch, setEmail }) => {
             <FormError name="email" />
           </div>
 
-          <div>
+          <div className="relative">
             <label htmlFor="password" className="label">
               Password
             </label>
             <Field
               id="password"
               name="password"
-              type="password"
+              type={show ? "text" : "password"}
               className="input"
               placeholder="••••••••"
             />
+            <button
+              type="button"
+              onClick={toggle}
+              className="absolute right-3 top-10 text-primary-400 hover:text-primary-500 text-xl"
+            >
+              {show ? <FaEyeSlash /> : <FaEye />}
+            </button>
             <FormError name="password" />
           </div>
 

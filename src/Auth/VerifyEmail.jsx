@@ -13,7 +13,7 @@ const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
 const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
 const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 
-const VerifyEmail = () => {
+const VerifyEmail = ({ email }) => {
   const [error, setError] = useState("");
   const [sendCode, setSendCode] = useState(false);
   const { formattedTime, isExpired, reset } = useCountdownTimer(300);
@@ -77,7 +77,7 @@ const VerifyEmail = () => {
       toast.success("Verification code resent to your email!");
       reset();
     } catch (e) {
-      setError("Failed to sendCode code.");
+      setError("Failed to send code.");
     }
   };
 
@@ -96,6 +96,10 @@ const VerifyEmail = () => {
               {formatApiError(error)}
             </div>
           )}
+
+          <p className="text-sm text-center font-semibold text-primary-700">
+            {email}
+          </p>
           <div>
             <label className="label">Enter 6-digit Code</label>
             <Field name="code" className="input" />

@@ -6,7 +6,13 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { auth, db } from "../Auth/Firebase";
 import { toast } from "react-toastify";
-import { formatApiError, generateCode, FormError } from "../Utils/EventUtils";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import {
+  formatApiError,
+  generateCode,
+  FormError,
+  togglePassword,
+} from "../Utils/EventUtils";
 import { send } from "emailjs-com";
 
 const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
@@ -22,8 +28,9 @@ const SignInSchema = Yup.object().shape({
     .required("Password is required"),
 });
 
-const SignInForm = ({ onSwitch }) => {
+const SignInForm = ({ onSwitch, setEmail }) => {
   const [error, setError] = useState("");
+  const { show, toggle } = togglePassword();
   const navigate = useNavigate();
 
   const handleSignInSubmit = async (values, { setSubmitting, resetForm }) => {
@@ -54,6 +61,7 @@ const SignInForm = ({ onSwitch }) => {
           publicKey
         );
         onSwitch("verification");
+        setEmail(userData.email);
         toast.info("Please enter code sent to your email for verification.");
         return;
       }
@@ -94,17 +102,24 @@ const SignInForm = ({ onSwitch }) => {
             <FormError name="email" />
           </div>
 
-          <div>
+          <div className="relative">
             <label htmlFor="password" className="label">
               Password
             </label>
             <Field
               id="password"
               name="password"
-              type="password"
+              type={show ? "text" : "password"}
               className="input"
               placeholder="••••••••"
             />
+            <button
+              type="button"
+              onClick={toggle}
+              className="absolute right-3 top-10 text-primary-400 hover:text-primary-500 text-xl"
+            >
+              {show ? <FaEyeSlash /> : <FaEye />}
+            </button>
             <FormError name="password" />
           </div>
 

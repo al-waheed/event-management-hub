@@ -1,4 +1,5 @@
 import { ErrorMessage } from "formik";
+import { useState } from "react";
 
 export const formatApiError = (error) => {
   const cleaned = error
@@ -21,4 +22,10 @@ export const FormError = ({ name }) => {
       className="text-red-500 text-[12px] mt-1"
     />
   );
+};
+
+export const togglePassword = () => {
+  const [show, setShow] = useState(false);
+  const toggle = () => setShow(!show);
+  return { show, toggle };
 };
