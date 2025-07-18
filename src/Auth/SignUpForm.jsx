@@ -98,7 +98,7 @@ const SignUpForm = ({ onSwitch, setEmail }) => {
               name="fullname"
               type="text"
               className="input"
-              placeholder="John Doe"
+              placeholder="e.g Ibrahim Tanko"
             />
             <FormError name="fullname" />
           </div>
@@ -112,7 +112,7 @@ const SignUpForm = ({ onSwitch, setEmail }) => {
               name="email"
               type="email"
               className="input"
-              placeholder="you@example.com"
+              placeholder="your_email@example.com"
             />
             <FormError name="email" />
           </div>

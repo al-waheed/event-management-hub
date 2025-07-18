@@ -97,7 +97,7 @@ const SignInForm = ({ onSwitch, setEmail }) => {
               name="email"
               type="email"
               className="input"
-              placeholder="you@example.com"
+              placeholder="your_email@example.com"
             />
             <FormError name="email" />
           </div>

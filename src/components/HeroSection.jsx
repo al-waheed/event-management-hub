@@ -1,14 +1,18 @@
 import { motion } from "framer-motion";
 import FormWrapper from "../Auth/FormWrapper";
 import FeatureList from "./FeatureList";
+import { Link } from "react-router-dom";
 import Logo from "./Logo";
 
 const HeroSection = () => {
   return (
     <div className="relative flex-1 flex flex-col md:flex-row">
-      <div className="absolute top-4 right-4 md:top-6 md:right-6 z-10 p-3">
+      <Link
+        to="/"
+        className="absolute top-4 right-4 md:top-6 md:right-6 z-10 p-3"
+      >
         <Logo />
-      </div>
+      </Link>
 
       <motion.div
         className="w-full md:w-1/2 bg-primary-50 p-6 md:p-12 flex items-center"
