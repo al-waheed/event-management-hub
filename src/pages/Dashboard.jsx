@@ -32,6 +32,10 @@ const Dashboard = () => {
   return (
     <div>
       <h1>Dashboard</h1>
+      <div>
+        <h1 className="text-2xl font-bold mb-4">Dashboard Home</h1>
+        <p>Welcome to your dashboard00000!</p>
+      </div>
       {userData ? (
         <div>
           <p>Welcome, {userData.fullname}!</p>
