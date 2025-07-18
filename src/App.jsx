@@ -1,27 +1,30 @@
 import LandingPage from "./pages/LandingPage";
 import Dashboard from "./pages/Dashboard";
-import VerifyEmail from "./Auth/VerifyEmail";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { auth } from "./Auth/Firebase";
 
 function App() {
-  // const [user, setUser] = useState(null);
+  const [user, setUser] = useState(null);
 
-  // useEffect(() => {
-  //   const unsubscribe = auth.onAuthStateChanged((user) => {
-  //     setUser(user);
-  //   });
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setUser(user);
+    });
 
-  //   return () => unsubscribe();
-  // }, []);
-  // path="/"
-  //       element={user ? <Navigate to="/dashboard" /> : <LandingPage />}
+    return () => unsubscribe();
+  }, []);
 
   return (
     <Routes>
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/dashboard" element={<Dashboard />} />
+      <Route
+        path="/"
+        element={user ? <Navigate to="/dashboard" /> : <LandingPage />}
+      />
+      <Route
+        path="/dashboard"
+        element={user ? <Dashboard /> : <Navigate to="/" />}
+      />
     </Routes>
   );
 }
