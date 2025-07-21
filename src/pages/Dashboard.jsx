@@ -20,15 +20,6 @@ const Dashboard = () => {
     fetchUserData();
   }, []);
 
-  const handleLogout = async () => {
-    try {
-      await auth.signOut();
-      window.location.href = "/";
-    } catch (e) {
-      console.log(e.message);
-    }
-  };
-
   return (
     <div>
       <h1>Dashboard</h1>
@@ -44,9 +35,6 @@ const Dashboard = () => {
             Account created on:{" "}
             {new Date(userData.createdAt?.seconds * 1000).toLocaleDateString()}
           </p>
-          <button className="btn btn-primary" onClick={() => handleLogout()}>
-            Sign Out
-          </button>
         </div>
       ) : (
         <p>Loading user data...</p>

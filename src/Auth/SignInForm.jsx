@@ -14,6 +14,7 @@ import {
   togglePassword,
 } from "../Utils/EventUtils";
 import { send } from "emailjs-com";
+import { ThreeDots } from "react-loader-spinner";
 
 const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
 const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
@@ -47,23 +48,27 @@ const SignInForm = ({ onSwitch, setEmail }) => {
       const snap = await getDoc(ref);
       const userData = snap.data();
 
-      if (!userData?.emailVerified) {
-        const code = generateCode();
-        await updateDoc(ref, { code });
-        await send(
-          serviceId,
-          templateId,
-          {
-            user_name: userData.fullname,
-            user_email: userData.email,
-            code,
-          },
-          publicKey
-        );
-        onSwitch("verification");
-        setEmail(userData.email);
-        toast.info("Please enter code sent to your email for verification.");
-        return;
+      try {
+        if (!userData?.emailVerified) {
+          const code = generateCode();
+          await updateDoc(ref, { code });
+          await send(
+            serviceId,
+            templateId,
+            {
+              user_name: userData.fullname,
+              user_email: userData.email,
+              code,
+            },
+            publicKey
+          );
+          onSwitch("verification");
+          setEmail(userData.email);
+          toast.info("Please enter code sent to your email for verification.");
+          return;
+        }
+      } catch (e) {
+        console.log(e);
       }
       navigate("/dashboard");
       toast.success("Logged in successfully!");
@@ -118,7 +123,7 @@ const SignInForm = ({ onSwitch, setEmail }) => {
               onClick={toggle}
               className="absolute right-3 top-10 text-primary-400 hover:text-primary-500 text-xl"
             >
-              {show ? <FaEyeSlash /> : <FaEye />}
+              {show ? <FaEye /> : <FaEyeSlash />}
             </button>
             <FormError name="password" />
           </div>
@@ -134,10 +139,21 @@ const SignInForm = ({ onSwitch, setEmail }) => {
 
           <button
             type="submit"
-            className="w-full btn btn-primary py-3"
+            className="w-full btn btn-primary py-3 font-bold"
             disabled={isSubmitting}
           >
-            {isSubmitting ? "Logging In..." : "Log In"}
+            {isSubmitting ? (
+              <ThreeDots
+                visible={true}
+                height="25"
+                width="25"
+                radius="9"
+                color="#ffffff"
+                ariaLabel="three-dots-loading"
+              />
+            ) : (
+              "Log In"
+            )}
           </button>
         </Form>
       )}

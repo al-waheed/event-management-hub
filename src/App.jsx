@@ -1,3 +1,7 @@
+import { Navigate, Route, Routes } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { auth } from "./Auth/Firebase";
+import { RotatingLines } from "react-loader-spinner";
 import LandingPage from "./pages/LandingPage";
 import DashboardLayout from "./components/DashboardLayout";
 import Dashboard from "./pages/Dashboard";
@@ -5,9 +9,6 @@ import CreateEvent from "./pages/CreateEvent";
 import FindEvents from "./pages/FindEvents";
 import MyEvents from "./pages/MyEvents";
 import Profile from "./pages/Profile";
-import { Navigate, Route, Routes } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { auth } from "./Auth/Firebase";
 
 const dashboardRoutes = [
   { path: "", element: <Dashboard /> },
@@ -19,19 +20,41 @@ const dashboardRoutes = [
 
 function App() {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       setUser(user);
+      setLoading(false);
     });
     return () => unsubscribe();
   }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div>
+          <RotatingLines
+            visible={true}
+            height="80"
+            width="80"
+            strokeWidth="4"
+            strokeColor="#db2777"
+            animationDuration="0.75"
+            ariaLabel="rotating-lines-loading"
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <Routes>
       <Route
         path="/"
-        element={user ? <Navigate to="/dashboard" /> : <LandingPage />}
+        element={
+          !!user?.emailVerified ? <Navigate to="/dashboard" /> : <LandingPage />
+        }
       />
       <Route
         path="/dashboard"

@@ -14,6 +14,7 @@ import {
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Timestamp } from "firebase/firestore";
 import { send } from "emailjs-com";
+import { ThreeDots } from "react-loader-spinner";
 
 const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
 const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
@@ -133,7 +134,7 @@ const SignUpForm = ({ onSwitch, setEmail }) => {
               onClick={toggle}
               className="absolute right-3 top-10 text-primary-400 hover:text-primary-500 text-xl"
             >
-              {show ? <FaEyeSlash /> : <FaEye />}
+              {show ? <FaEye /> : <FaEyeSlash />}
             </button>
             <FormError name="password" />
           </div>
@@ -143,7 +144,18 @@ const SignUpForm = ({ onSwitch, setEmail }) => {
             className="w-full btn btn-primary py-3"
             disabled={isSubmitting}
           >
-            {isSubmitting ? "Signing Up..." : "Sign Up"}
+            {isSubmitting ? (
+              <ThreeDots
+                visible={true}
+                height="25"
+                width="25"
+                radius="9"
+                color="#ffffff"
+                ariaLabel="three-dots-loading"
+              />
+            ) : (
+              "Sign Up"
+            )}
           </button>
         </Form>
       )}

@@ -4,10 +4,11 @@ import * as Yup from "yup";
 import { auth, db } from "../Auth/Firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { toast } from "react-toastify";
-import { formatApiError, generateCode, FormError } from "../Utils/EventUtils";
+import { generateCode, FormError } from "../Utils/EventUtils";
 import { useNavigate } from "react-router-dom";
 import { useCountdownTimer } from "../hook/useCountdownTimer";
 import { send } from "emailjs-com";
+import { ThreeDots } from "react-loader-spinner";
 
 const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
 const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
@@ -16,7 +17,7 @@ const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 const VerifyEmail = ({ email }) => {
   const [error, setError] = useState("");
   const [sendCode, setSendCode] = useState(false);
-  const { formattedTime, isExpired, reset } = useCountdownTimer(300);
+  const { formattedTime, isExpired, reset } = useCountdownTimer(50);
   const ref = doc(db, "users", auth.currentUser.uid);
   const navigate = useNavigate();
 
@@ -91,13 +92,9 @@ const VerifyEmail = ({ email }) => {
     >
       {({ isSubmitting }) => (
         <Form className="space-y-4">
-          {error && (
-            <div className="text-red-500 text-sm mb-4">
-              {formatApiError(error)}
-            </div>
-          )}
+          {error && <div className="text-red-500 text-sm mb-4">{error}</div>}
 
-          <p className="text-sm text-center font-semibold text-primary-700">
+          <p className="text-sm text-center font-semibold text-primary-500">
             {email}
           </p>
           <div>
@@ -112,18 +109,31 @@ const VerifyEmail = ({ email }) => {
           >
             {isSubmitting ? "Verifying..." : "Verify"}
           </button>
-          <p className="text-sm text-gray-600 text-center">
+          <p className="text-sm text-primary-600 text-center font-semibold">
             {isExpired ? (
               <button
                 type="button"
-                className="w-full text-primary-600 hover:text-primary-700 focus:outline-none"
+                className="w-full text-primary-600 hover:text-primary-700 font-semibold focus:outline-none"
                 onClick={async () => {
                   setSendCode(true);
                   await resendVerificationCode();
                   setSendCode(false);
                 }}
               >
-                {sendCode ? "Resending..." : "Resend Code"}
+                {sendCode ? (
+                  <span className="flex items-end justify-center">
+                    <ThreeDots
+                      visible={true}
+                      height="30"
+                      width="30"
+                      radius="9"
+                      color="#be185d"
+                      ariaLabel="three-dots-loading"
+                    />
+                  </span>
+                ) : (
+                  "Resend Code"
+                )}
               </button>
             ) : (
               `Resend in: ${formattedTime}`

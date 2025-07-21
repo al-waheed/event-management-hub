@@ -1,7 +1,7 @@
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import FormWrapper from "../Auth/FormWrapper";
 import FeatureList from "./FeatureList";
-import { Link } from "react-router-dom";
 import Logo from "./Logo";
 
 const HeroSection = () => {
