@@ -8,22 +8,22 @@ import { motion } from "framer-motion";
 
 const features = [
   {
-    icon: <FaCalendarAlt className="text-primary-500" />,
+    icon: <FaCalendarAlt className="text-primary-600" />,
     title: "Create Events",
     description: "Easily set up and customize your events in minutes.",
   },
   {
-    icon: <FaUserPlus className="text-primary-500" />,
+    icon: <FaUserPlus className="text-primary-600" />,
     title: "Invite Attendees",
     description: "Send personalized invitations and manage guest lists.",
   },
   {
-    icon: <FaChartBar className="text-primary-500" />,
+    icon: <FaChartBar className="text-primary-600" />,
     title: "Track Performance",
     description: "Get insights on attendance and engagement.",
   },
   {
-    icon: <FaMobileAlt className="text-primary-500" />,
+    icon: <FaMobileAlt className="text-primary-600" />,
     title: "Mobile Experience",
     description: "Manage events on the go with our mobile app.",
   },
@@ -47,10 +47,10 @@ const FeatureList = () => {
               </div>
             </div>
             <div className="ml-4">
-              <h3 className="text-lg font-semibold text-gray-900">
+              <h3 className="text-lg font-semibold text-primary-50">
                 {feature.title}
               </h3>
-              <p className="mt-1 text-gray-600">{feature.description}</p>
+              <p className="mt-1 text-white">{feature.description}</p>
             </div>
           </motion.div>
         );

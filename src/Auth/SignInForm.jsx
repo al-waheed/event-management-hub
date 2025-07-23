@@ -121,7 +121,7 @@ const SignInForm = ({ onSwitch, setEmail }) => {
             <button
               type="button"
               onClick={toggle}
-              className="absolute right-3 top-10 text-primary-400 hover:text-primary-500 text-xl"
+              className="absolute right-3 top-11 text-primary-400 hover:text-primary-500 text-[16px]"
             >
               {show ? <FaEye /> : <FaEyeSlash />}
             </button>
@@ -139,7 +139,7 @@ const SignInForm = ({ onSwitch, setEmail }) => {
 
           <button
             type="submit"
-            className="w-full btn btn-primary py-3 font-bold"
+            className="w-full btn btn-primary font-bold"
             disabled={isSubmitting}
           >
             {isSubmitting ? (

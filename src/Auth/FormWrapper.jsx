@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { FaGoogle, FaFacebook } from "react-icons/fa";
 import SignUpForm from "./SignUpForm";
 import SignInForm from "./SignInForm";
 import VerifyEmail from "./VerifyEmail";
@@ -48,7 +47,7 @@ const FormWrapper = () => {
                 : "Don't have an account?"}
               <button
                 onClick={() => setStep(step === "signup" ? "login" : "signup")}
-                className="ml-1 text-primary-600 hover:text-primary-700 font-medium"
+                className="ml-1 text-primary-400 hover:text-primary-500 font-medium"
               >
                 {step === "signup" ? "Log in" : "Sign up"}
               </button>

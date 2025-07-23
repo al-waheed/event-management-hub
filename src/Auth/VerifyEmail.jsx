@@ -109,11 +109,11 @@ const VerifyEmail = ({ email }) => {
           >
             {isSubmitting ? "Verifying..." : "Verify"}
           </button>
-          <p className="text-sm text-primary-600 text-center font-semibold">
+          <p className="text-sm text-primary-500 text-center font-semibold">
             {isExpired ? (
               <button
                 type="button"
-                className="w-full text-primary-600 hover:text-primary-700 font-semibold focus:outline-none"
+                className="w-full text-primary-500 hover:text-primary-600 font-semibold focus:outline-none"
                 onClick={async () => {
                   setSendCode(true);
                   await resendVerificationCode();
@@ -127,7 +127,7 @@ const VerifyEmail = ({ email }) => {
                       height="30"
                       width="30"
                       radius="9"
-                      color="#be185d"
+                      color="#ec4899"
                       ariaLabel="three-dots-loading"
                     />
                   </span>
