@@ -17,7 +17,7 @@ const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 const VerifyEmail = ({ email }) => {
   const [error, setError] = useState("");
   const [sendCode, setSendCode] = useState(false);
-  const { formattedTime, isExpired, reset } = useCountdownTimer(50);
+  const { formattedTime, isExpired, reset } = useCountdownTimer(300);
   const ref = doc(db, "users", auth.currentUser.uid);
   const navigate = useNavigate();
 
@@ -99,7 +99,7 @@ const VerifyEmail = ({ email }) => {
           </p>
           <div>
             <label className="label">Enter 6-digit Code</label>
-            <Field name="code" className="input" />
+            <Field name="code" className="input" placeholder="XXX_XXX" />
             <FormError name="code" />
           </div>
           <button
