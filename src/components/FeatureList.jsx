@@ -8,22 +8,22 @@ import { motion } from "framer-motion";
 
 const features = [
   {
-    icon: <FaCalendarAlt className="text-primary-600" />,
+    icon: <FaCalendarAlt />,
     title: "Create Events",
     description: "Easily set up and customize your events in minutes.",
   },
   {
-    icon: <FaUserPlus className="text-primary-600" />,
+    icon: <FaUserPlus />,
     title: "Invite Attendees",
     description: "Send personalized invitations and manage guest lists.",
   },
   {
-    icon: <FaChartBar className="text-primary-600" />,
+    icon: <FaChartBar />,
     title: "Track Performance",
     description: "Get insights on attendance and engagement.",
   },
   {
-    icon: <FaMobileAlt className="text-primary-600" />,
+    icon: <FaMobileAlt />,
     title: "Mobile Experience",
     description: "Manage events on the go with our mobile app.",
   },
@@ -41,13 +41,13 @@ const FeatureList = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.2 + i * 0.1 }}
           >
-            <div className="flex-shrink-0 mt-1">
-              <div className="w-8 h-8 flex items-center justify-center">
+            <div className="flex-shrink-0">
+              <div className="w-8 h-8 flex items-center rounded-2xl bg-background justify-center">
                 {feature.icon}
               </div>
             </div>
             <div className="ml-4">
-              <h3 className="text-lg font-semibold text-primary-50">
+              <h3 className="text-lg font-semibold text-background">
                 {feature.title}
               </h3>
               <p className="mt-1 text-white">{feature.description}</p>

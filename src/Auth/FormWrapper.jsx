@@ -15,7 +15,7 @@ const FormWrapper = () => {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
       >
-        <h2 className="text-2xl font-bold text-gray-900 text-center mb-2">
+        <h2 className="text-2xl font-bold text-primary text-center mb-2">
           {step === "signup"
             ? "Create your account"
             : step === "verification"
@@ -47,7 +47,7 @@ const FormWrapper = () => {
                 : "Don't have an account?"}
               <button
                 onClick={() => setStep(step === "signup" ? "login" : "signup")}
-                className="ml-1 text-primary-400 hover:text-primary-500 font-medium"
+                className="ml-1 text-primary hover:text-primary-hover font-medium"
               >
                 {step === "signup" ? "Log in" : "Sign up"}
               </button>

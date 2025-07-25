@@ -1,12 +1,16 @@
-const Logo = ({ color }) => {
+const Logo = ({ color, bg }) => {
   return (
     <div className="flex items-center">
-      <div className="w-10 h-10 rounded-md bg-primary-500 flex items-center justify-center text-white font-bold text-2xl">
+      <div
+        className={`w-10 h-10 rounded-md flex items-center justify-center font-bold text-2xl ${
+          bg ? "bg-white text-primary" : "bg-primary text-white"
+        }`}
+      >
         EH
       </div>
       <span
-        className={`ml-2 text-2xl font-bold ${
-          color ? "text-primary-50" : "text-neutral-900"
+        className={`ml-2 text-3xl font-bold italic ${
+          color ? "text-yellow" : "text-primary"
         }`}
       >
         EventHub

@@ -39,13 +39,13 @@ const Sidebar = () => {
     <div>
       <button
         onClick={() => setToggle(!toggle)}
-        className="md:hidden fixed top-6 right-4 z-50 text-white bg-primary-400 p-2 rounded"
+        className="md:hidden fixed top-6 right-4 z-50 text-white bg-primary p-2 rounded"
       >
         {toggle ? <FaRegWindowClose size={20} /> : <FaBars size={20} />}
       </button>
       <div
         className={`
-          fixed top-0 left-0 h-full w-80 bg-primary-400 text-white p-4 z-40
+          fixed top-0 left-0 h-full w-80 bg-primary text-white p-4 z-40
           transition-transform duration-300 ease-in-out
           ${toggle ? "translate-x-0" : "-translate-x-full"}
           md:translate-x-0 md:static md:block
@@ -53,7 +53,7 @@ const Sidebar = () => {
       >
         <div className="h-full flex flex-col cursor-pointer">
           <div className="pl-6 py-7">
-            <Logo />
+            <Logo color bg />
           </div>
           {sidebarLinks.map(({ path, label, icon }) => (
             <NavLink
@@ -63,21 +63,19 @@ const Sidebar = () => {
               onClick={() => setToggle(false)}
               className={({ isActive }) =>
                 `flex items-center mb-1 mt-2 gap-3 pl-6 py-5 mx-2 font-semibold ${
-                  isActive
-                    ? "bg-primary-500 rounded-md"
-                    : "hover:font-bold"
+                  isActive ? "bg-primary-hover rounded-md" : "hover:font-bold"
                 }`
               }
             >
               <div className="text-2xl">{icon}</div>
-              <p className="text-base"> {label}</p>
+              <p className="text-xl"> {label}</p>
             </NavLink>
           ))}
-          <div className="mt-auto px-6 py-4 flex items-center text-primary-500 font-semibold gap-3">
-            <IoMdLogOut className="w-5 h-5 bg-white text-primary-500 p-1 rounded" />
+          <div className="mt-auto px-6 py-4 flex items-center text-primary font-semibold gap-3">
+            <IoMdLogOut className="w-5 h-5 bg-background text-primary p-1 rounded" />
             <button
               onClick={handleLogout}
-              className="text-sm text-primary-50 hover:underline"
+              className="text-sm text-background hover:underline"
             >
               LOGOUT
             </button>

@@ -94,7 +94,7 @@ const VerifyEmail = ({ email }) => {
         <Form className="space-y-4">
           {error && <div className="text-red-500 text-sm mb-4">{error}</div>}
 
-          <p className="text-sm text-center font-semibold text-primary-500">
+          <p className="text-sm text-center font-semibold text-primary-hover">
             {email}
           </p>
           <div>
@@ -109,11 +109,11 @@ const VerifyEmail = ({ email }) => {
           >
             {isSubmitting ? "Verifying..." : "Verify"}
           </button>
-          <p className="text-sm text-primary-500 text-center font-semibold">
+          <p className="text-sm text-primary text-center font-semibold">
             {isExpired ? (
               <button
                 type="button"
-                className="w-full text-primary-500 hover:text-primary-600 font-semibold focus:outline-none"
+                className="w-full text-primary hover:text-primary-hover font-semibold focus:outline-none"
                 onClick={async () => {
                   setSendCode(true);
                   await resendVerificationCode();
@@ -127,7 +127,7 @@ const VerifyEmail = ({ email }) => {
                       height="30"
                       width="30"
                       radius="9"
-                      color="#ec4899"
+                      color="#2B293D"
                       ariaLabel="three-dots-loading"
                     />
                   </span>

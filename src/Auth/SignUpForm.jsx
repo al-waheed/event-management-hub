@@ -133,7 +133,7 @@ const SignUpForm = ({ onSwitch, setEmail }) => {
             <button
               type="button"
               onClick={toggle}
-              className="absolute right-3 top-11 text-primary-400 hover:text-primary-500 text-[16px]"
+              className="absolute right-3 top-10 text-primary hover:text-primary-hover text-[16px]"
             >
               {show ? <FaEye /> : <FaEyeSlash />}
             </button>
