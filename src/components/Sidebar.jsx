@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { handleLogout } from "../Auth/SIgnOut";
+import { handleLogout } from "../Auth/SignOut";
 import Logo from "./Logo";
 import {
   MdOutlineDashboardCustomize,
