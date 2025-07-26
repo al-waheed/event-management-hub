@@ -53,7 +53,7 @@ const Sidebar = () => {
       >
         <div className="h-full flex flex-col cursor-pointer">
           <div className="pl-6 py-7">
-            <Logo color bg />
+            <Logo bg />
           </div>
           {sidebarLinks.map(({ path, label, icon }) => (
             <NavLink

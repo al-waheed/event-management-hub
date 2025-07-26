@@ -40,7 +40,6 @@ body {
 
   .input {
     @apply w-full px-4 py-3 border border-primary outline-none rounded-md 
-           focus:ring-2 focus:ring-primary-hover focus:border-primary-hover 
            bg-white text-primary placeholder:text-gray-400;
   }
 

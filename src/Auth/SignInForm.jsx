@@ -7,6 +7,7 @@ import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { auth, db } from "../Auth/Firebase";
 import { toast } from "react-toastify";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import ForgotPasswordModal from "../modal/ForgotPasswordModal";
 import {
   formatApiError,
   generateCode,
@@ -31,6 +32,7 @@ const SignInSchema = Yup.object().shape({
 
 const SignInForm = ({ onSwitch, setEmail }) => {
   const [error, setError] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { show, toggle } = togglePassword();
   const navigate = useNavigate();
 
@@ -80,84 +82,93 @@ const SignInForm = ({ onSwitch, setEmail }) => {
     }
   };
 
+  const toggleModal = () => {
+    setIsModalOpen(!isModalOpen);
+  };
+
   return (
-    <Formik
-      initialValues={signInValues}
-      validationSchema={SignInSchema}
-      onSubmit={handleSignInSubmit}
-    >
-      {({ isSubmitting }) => (
-        <Form className="space-y-4">
-          {error && (
-            <div className="text-red-500 text-sm mb-4">
-              {formatApiError(error)}
-            </div>
-          )}
-          <div>
-            <label htmlFor="email" className="label">
-              Email
-            </label>
-            <Field
-              id="email"
-              name="email"
-              type="email"
-              className="input"
-              placeholder="your_email@example.com"
-            />
-            <FormError name="email" />
-          </div>
-
-          <div className="relative">
-            <label htmlFor="password" className="label">
-              Password
-            </label>
-            <Field
-              id="password"
-              name="password"
-              type={show ? "text" : "password"}
-              className="input"
-              placeholder="••••••••"
-            />
-            <button
-              type="button"
-              onClick={toggle}
-              className="absolute right-3 top-10 text-primary hover:text-primary-hover text-[16px]"
-            >
-              {show ? <FaEye /> : <FaEyeSlash />}
-            </button>
-            <FormError name="password" />
-          </div>
-
-          <div className="flex justify-end">
-            <a
-              href="#forgot-password"
-              className="text-sm text-primary hover:text-primary-hover"
-            >
-              Forgot password?
-            </a>
-          </div>
-
-          <button
-            type="submit"
-            className="w-full btn btn-primary font-bold"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? (
-              <ThreeDots
-                visible={true}
-                height="25"
-                width="25"
-                radius="9"
-                color="#ffffff"
-                ariaLabel="three-dots-loading"
-              />
-            ) : (
-              "Log In"
+    <>
+      <Formik
+        initialValues={signInValues}
+        validationSchema={SignInSchema}
+        onSubmit={handleSignInSubmit}
+      >
+        {({ isSubmitting }) => (
+          <Form className="space-y-4">
+            {error && (
+              <div className="text-red-500 text-sm mb-4">
+                {formatApiError(error)}
+              </div>
             )}
-          </button>
-        </Form>
+            <div>
+              <label htmlFor="email" className="label">
+                Email
+              </label>
+              <Field
+                id="email"
+                name="email"
+                type="email"
+                className="input"
+                placeholder="your_email@example.com"
+              />
+              <FormError name="email" />
+            </div>
+
+            <div className="relative">
+              <label htmlFor="password" className="label">
+                Password
+              </label>
+              <Field
+                id="password"
+                name="password"
+                type={show ? "text" : "password"}
+                className="input"
+                placeholder="••••••••"
+              />
+              <button
+                type="button"
+                onClick={toggle}
+                className="absolute right-3 top-10 text-primary hover:text-primary-hover text-[16px]"
+              >
+                {show ? <FaEye /> : <FaEyeSlash />}
+              </button>
+              <FormError name="password" />
+            </div>
+
+            <div className="flex justify-end">
+              <p
+                className="text-sm text-primary hover:text-primary-hover cursor-pointer"
+                onClick={toggleModal}
+              >
+                Forgot password?
+              </p>
+            </div>
+
+            <button
+              type="submit"
+              className="w-full btn btn-primary font-bold"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <ThreeDots
+                  visible={true}
+                  height="25"
+                  width="25"
+                  radius="9"
+                  color="#ffffff"
+                  ariaLabel="three-dots-loading"
+                />
+              ) : (
+                "Log In"
+              )}
+            </button>
+          </Form>
+        )}
+      </Formik>
+      {isModalOpen && (
+        <ForgotPasswordModal isOpen={isModalOpen} toggleModal={toggleModal} />
       )}
-    </Formik>
+    </>
   );
 };
 

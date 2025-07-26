@@ -30,3 +30,17 @@ export const togglePassword = () => {
   return { show, toggle };
 };
 
+export const listOfEvent = [
+  { value: "", label: "Please select one" },
+  { value: "music", label: "Music" },
+  { value: "conference", label: "Conference" },
+  { value: "seminar", label: "Seminar" },
+  { value: "webinar", label: "Webinar" },
+  { value: "workshop", label: "Workshop" },
+  { value: "networking", label: "Networking" },
+  { value: "fundraiser", label: "Fundraiser" },
+  { value: "sports", label: "Sports" },
+  { value: "festival", label: "Festival" },
+  { value: "religious", label: "Religious" },
+  { value: "wedding", label: "Wedding" },
+];

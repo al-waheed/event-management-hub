@@ -39,7 +39,7 @@ function App() {
             height="80"
             width="80"
             strokeWidth="4"
-            strokeColor="#db2777"
+            strokeColor="#2B293D"
             animationDuration="0.75"
             ariaLabel="rotating-lines-loading"
           />

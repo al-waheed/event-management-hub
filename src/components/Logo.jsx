@@ -1,4 +1,4 @@
-const Logo = ({ color, bg }) => {
+const Logo = ({ bg }) => {
   return (
     <div className="flex items-center">
       <div
@@ -8,11 +8,7 @@ const Logo = ({ color, bg }) => {
       >
         EH
       </div>
-      <span
-        className={`ml-2 text-3xl font-bold italic ${
-          color ? "text-yellow" : "text-primary"
-        }`}
-      >
+      <span className="ml-2 text-3xl font-bold italic text-yellow">
         EventHub
       </span>
     </div>

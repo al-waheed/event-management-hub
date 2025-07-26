@@ -5,7 +5,7 @@ import SignInForm from "./SignInForm";
 import VerifyEmail from "./VerifyEmail";
 
 const FormWrapper = () => {
-  const [step, setStep] = useState("signup");
+  const [step, setStep] = useState("login");
   const [userEmail, setUserEmail] = useState("");
 
   return (
