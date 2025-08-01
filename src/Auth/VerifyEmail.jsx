@@ -90,7 +90,7 @@ const VerifyEmail = ({ email }) => {
       })}
       onSubmit={emailVerification}
     >
-      {({ isSubmitting }) => (
+      {({ isSubmitting, values }) => (
         <Form className="space-y-4">
           {error && <div className="text-red-500 text-sm mb-4">{error}</div>}
 
@@ -114,6 +114,7 @@ const VerifyEmail = ({ email }) => {
               <button
                 type="button"
                 className="w-full text-primary hover:text-primary-hover font-semibold focus:outline-none"
+                disabled={!values.code || sendCode}
                 onClick={async () => {
                   setSendCode(true);
                   await resendVerificationCode();

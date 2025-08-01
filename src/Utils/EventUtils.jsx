@@ -19,7 +19,7 @@ export const FormError = ({ name }) => {
     <ErrorMessage
       name={name}
       component="div"
-      className="text-red-500 text-[12px] mt-1"
+      className="text-red-500 text-[12px]"
     />
   );
 };

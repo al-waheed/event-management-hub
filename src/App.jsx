@@ -5,7 +5,7 @@ import { RotatingLines } from "react-loader-spinner";
 import LandingPage from "./pages/LandingPage";
 import DashboardLayout from "./components/DashboardLayout";
 import Dashboard from "./pages/Dashboard";
-import CreateEvent from "./pages/CreateEvent";
+import CreateEvent from "./pages/CreateEvent/CreateEvent";
 import FindEvents from "./pages/FindEvents";
 import MyEvents from "./pages/MyEvents";
 import Profile from "./pages/Profile";

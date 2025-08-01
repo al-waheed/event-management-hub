@@ -14,16 +14,18 @@ const ForgotPasswordModal = ({ isOpen, toggleModal }) => {
         </p>
       </div>
       {isOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-md p-6 w-full max-w-md shadow-md relative">
+        <div className="fixed inset-0 bg-primary bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-background rounded-md p-6 w-full max-w-md shadow-md relative">
             <button
               onClick={toggleModal}
-              className="absolute top-2 right-2 text-primary hover:text-primary-hover text-xl"
+              className="absolute top-0 right-3 text-primary hover:text-primary-hover text-2xl"
             >
               &times;
             </button>
 
-            <h2 className="text-xl font-semibold mb-4 text-primary">Reset Password</h2>
+            <h2 className="text-xl text-center font-semibold mb-4 text-primary">
+              Reset Password
+            </h2>
 
             <ResetPassword closeModal={toggleModal} />
           </div>

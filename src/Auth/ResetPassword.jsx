@@ -58,7 +58,7 @@ const ResetPassword = ({ closeModal }) => {
         validationSchema={validationSchema}
         onSubmit={handleResetPassword}
       >
-        {({ isSubmitting }) => (
+        {({ isSubmitting, values }) => (
           <Form className="space-y-4">
             {error && (
               <div className="text-red-500 text-sm mb-4">
@@ -82,7 +82,7 @@ const ResetPassword = ({ closeModal }) => {
             <button
               type="submit"
               className="w-full btn btn-primary font-bold"
-              disabled={isSubmitting}
+              disabled={!values.email || isSubmitting}
             >
               {isSubmitting ? (
                 <ThreeDots
