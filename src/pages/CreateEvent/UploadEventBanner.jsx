@@ -33,13 +33,16 @@ const UploadEventImage = ({
     }
 
     if (file.size > bannerSizeLimit) {
-      toast.error("File exceeds 5MB");
+      toast.error("File must not exceeds 5MB");
       return;
     }
-
-    setFieldValue("eventBanner", file);
-    updateEventData({ eventBanner: file });
-    toast.success("Image uploaded!");
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setFieldValue("eventBanner", reader.result);
+      updateEventData({ eventBanner: reader.result });
+      toast.success("Image uploaded!");
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleUpdateData = (values) => {
@@ -51,11 +54,11 @@ const UploadEventImage = ({
     <div>
       <Formik
         initialValues={initialValues}
-        validationSchema={validationSchema}
+        // validationSchema={validationSchema}
         onSubmit={handleUpdateData}
       >
         {({ values, setFieldValue }) => {
-          const disabled = !values.eventDescription || !values.eventBanner;
+          {/* const disabled = !values.eventDescription || !values.eventBanner; */}
           return (
             <Form className="mt-8 max-w-4xl mx-auto space-y-3">
               <div className="pt-7">
@@ -106,7 +109,7 @@ const UploadEventImage = ({
                 </button>
                 <button
                   type="submit"
-                  disabled={disabled}
+                  // disabled={disabled}
                   className="btn btn-primary font-bold"
                 >
                   Continue

@@ -49,17 +49,17 @@ const CreateEvent = ({ nextStep, eventData, updateEventData }) => {
     <div>
       <Formik
         initialValues={initialValues}
-        validationSchema={validationSchema}
+        // validationSchema={validationSchema}
         onSubmit={handleCreatEvent}
       >
         {({ values }) => {
-          const disabled =
+          {/* const disabled =
             !values.eventTitle ||
             !values.eventCategory ||
             !values.eventType ||
             !values.eventSession ||
             !values.eventStarttime ||
-            !values.eventAddress;
+            !values.eventAddress; */}
 
           return (
             <Form className="mt-14 max-w-4xl mx-auto space-y-3 h-full">
@@ -195,7 +195,7 @@ const CreateEvent = ({ nextStep, eventData, updateEventData }) => {
               <div className="flex justify-end pt-2">
                 <button
                   type="submit"
-                  disabled={disabled}
+                  // disabled={disabled}
                   className="btn btn-primary font-bold"
                 >
                   Continue
