@@ -1,11 +1,9 @@
 import { useState, useEffect } from "react";
-import { setDoc, doc } from "firebase/firestore";
+import { setDoc, doc, arrayUnion, Timestamp } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { auth, db } from "../../Auth/Firebase";
-import { Timestamp } from "firebase/firestore";
 import { formatApiError } from "../../Utils/EventUtils";
 import { useDispatch, useSelector } from "react-redux";
-import { setUserData } from "../../redux/EventSlice";
 import { ThreeDots } from "react-loader-spinner";
 import { toast } from "react-toastify";
 
@@ -14,7 +12,6 @@ const ReviewEvent = ({ previouStep, eventData }) => {
   const [loading, setLoading] = useState(false);
   const userEventDetails = useSelector((state) => state.event.addEvent);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const handleEventSubmit = async () => {
     setError("");
@@ -24,14 +21,14 @@ const ReviewEvent = ({ previouStep, eventData }) => {
       await setDoc(
         ref,
         {
-          event: {
+          events: arrayUnion({
             ...eventData,
             createdAt: Timestamp.now(),
-          },
+            id: crypto.randomUUID(),
+          }),
         },
         { merge: true }
       );
-      dispatch(setUserData(eventData));
       toast.success("Event created successfully!");
       navigate("/dashboard/my-events");
     } catch (e) {
@@ -53,21 +50,17 @@ const ReviewEvent = ({ previouStep, eventData }) => {
       <div className="rounded-2xl border-2 border-primary p-6">
         <div className=" overflow-hidden">
           <div className="w-full h-96">
-            {userEventDetails.eventBanner ? (
+            {userEventDetails.eventBanner && (
               <img
                 src={userEventDetails.eventBanner}
                 alt="Event Banner"
                 className="w-full h-full object-cover rounded-t-2xl"
               />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-gray-500">
-                Banner Image Placeholder
-              </div>
             )}
           </div>
 
           <div className="py-6 space-y-6">
-            <h1 className="text-2xl font-extrabold text-primary">
+            <h1 className="text-2xl font-extrabold text-primary uppercase">
               {userEventDetails.eventTitle}
             </h1>
 
@@ -75,7 +68,8 @@ const ReviewEvent = ({ previouStep, eventData }) => {
               <div className="w-full md:w-1/2">
                 <h4 className="font-semibold mb-2">Date and Time</h4>
                 <p>📅 {userEventDetails.eventSession}</p>
-                <p>⏰ {userEventDetails.eventStarttime}</p>
+                <p>⏰ Start Time - {userEventDetails.eventStarttime}</p>
+                <p>⏰ End Time - {userEventDetails.eventEndtime || null}</p>
                 <a
                   href="#"
                   className="text-sm text-blue-600 underline block mt-1"
@@ -143,7 +137,7 @@ const ReviewEvent = ({ previouStep, eventData }) => {
         <button
           type="button"
           onClick={handleEventSubmit}
-          className="btn btn-primary font-bold"
+          className="btn btn-primary font-bold w-40"
         >
           {loading ? (
             <ThreeDots
