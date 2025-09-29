@@ -1,27 +1,9 @@
-import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
-import { getDoc, doc } from "firebase/firestore";
-import { auth, db } from "../../Auth/Firebase";
 import EventLists from "./EventLists";
+import { useUserData } from "../../queries/UserQueries";
 
 const Dashboard = () => {
-  const [userData, setUserData] = useState(null);
-
-  const fetchUserData = async () => {
-    auth.onAuthStateChanged(async (user) => {
-      const userDoc = await getDoc(doc(db, "users", user.uid));
-      if (userDoc.exists()) {
-        setUserData(userDoc.data());
-      } else {
-        console.log("No user data found!");
-      }
-    });
-  };
-
-  console.log("userData",userData)
-  useEffect(() => {
-    fetchUserData();
-  }, []);
+  const { data: userData, isLoading } = useUserData();
 
   return (
     <div>
@@ -46,7 +28,7 @@ const Dashboard = () => {
         <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="bg-gray-50 border rounded-2xl p-4 text-center shadow-sm">
             <div className="text-3xl sm:text-4xl font-semibold text-primary">
-              {5}
+              {userData?.events?.length || 0}
             </div>
             <div className="mt-1 text-sm text-primary">Events Created</div>
           </div>
@@ -75,7 +57,7 @@ const Dashboard = () => {
       </div>
       <div className="max-w-6xl mx-auto mt-8">
         <EventLists />
-        </div>
+      </div>
     </div>
   );
 };

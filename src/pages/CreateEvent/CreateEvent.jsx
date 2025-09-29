@@ -19,7 +19,11 @@ const CreateEvent = () => {
   });
 
   const updateEventData = (newData) => {
-    setEventData((prev) => ({ ...prev, ...newData }));
+    setEventData((prev) => {
+      const updatedData = { ...prev, ...newData };
+      localStorage.setItem("eventData", JSON.stringify(updatedData));
+      return updatedData;
+    });
   };
 
   const nextStep = () => {

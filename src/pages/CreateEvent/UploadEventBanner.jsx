@@ -4,8 +4,6 @@ import * as Yup from "yup";
 import { FormError } from "../../Utils/EventUtils";
 import { toast } from "react-toastify";
 import { BsCloudArrowUp } from "react-icons/bs";
-import { useDispatch } from "react-redux";
-import { setUserData } from "../../redux/EventSlice";
 
 const bannerSizeLimit = 5 * 1024 * 1024; // 5 MB
 
@@ -16,7 +14,6 @@ const UploadEventImage = ({
   updateEventData,
 }) => {
   const [fileName, setFileName] = useState("");
-  const dispatch = useDispatch();
 
   const initialValues = {
     eventBanner: eventData.eventBanner,
@@ -47,7 +44,10 @@ const UploadEventImage = ({
   };
 
   const handleUpdateData = (values) => {
-    dispatch(setUserData({ ...eventData, ...values }));
+    localStorage.setItem(
+      "eventData",
+      JSON.stringify({ ...eventData, ...values })
+    );
     updateEventData(values);
     nextStep();
   };

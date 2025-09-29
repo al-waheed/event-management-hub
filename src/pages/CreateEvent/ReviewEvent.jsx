@@ -3,15 +3,16 @@ import { setDoc, doc, arrayUnion, Timestamp } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { auth, db } from "../../Auth/Firebase";
 import { formatApiError } from "../../Utils/EventUtils";
-import { useSelector } from "react-redux";
 import { ThreeDots } from "react-loader-spinner";
 import { toast } from "react-toastify";
 
 const ReviewEvent = ({ previouStep, eventData }) => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const userEventDetails = useSelector((state) => state.event.addEvent);
   const navigate = useNavigate();
+  const userEventDetails = localStorage.getItem("eventData")
+    ? JSON.parse(localStorage.getItem("eventData"))
+    : eventData;
 
   const handleEventSubmit = async () => {
     setError("");
@@ -29,6 +30,7 @@ const ReviewEvent = ({ previouStep, eventData }) => {
         },
         { merge: true }
       );
+      localStorage.removeItem("eventData");
       toast.success("Event created successfully!");
       navigate("/dashboard/my-events");
     } catch (e) {
