@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { setDoc, doc, arrayUnion, Timestamp } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { auth, db } from "../../Auth/Firebase";
 import { formatApiError } from "../../Utils/EventUtils";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { ThreeDots } from "react-loader-spinner";
 import { toast } from "react-toastify";
 
@@ -77,15 +77,17 @@ const ReviewEvent = ({ previouStep, eventData }) => {
                   + Add to Calendar
                 </a>
               </div>
-              <div className="">
-                <h4 className="font-semibold mb-2 ">Category / Type</h4>
+              <div className="capitalize">
+                <h4 className="font-semibold mb-2">Category / Type</h4>
                 <p>📌 {userEventDetails.eventCategory}</p>
                 <p>🧾 {userEventDetails.eventType}</p>
               </div>
             </div>
 
             <div>
-              <h4 className="font-semibold mb-2 text-primary">Location</h4>
+              <h4 className="font-semibold mb-2 text-primary capitalize">
+                Location
+              </h4>
               <p>📍 {userEventDetails.eventAddress}</p>
               <div className="bg-gray-200 w-full h-48 rounded-md flex items-center justify-center mt-2">
                 <span className="text-gray-500">Map Placeholder</span>

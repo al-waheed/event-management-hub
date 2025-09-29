@@ -17,8 +17,6 @@ const CreateEvent = () => {
     eventDescription: "",
     eventBanner: "",
   });
-  
-  console.log("Event Data:", eventData);
 
   const updateEventData = (newData) => {
     setEventData((prev) => ({ ...prev, ...newData }));

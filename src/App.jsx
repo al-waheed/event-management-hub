@@ -4,7 +4,7 @@ import { auth } from "./Auth/Firebase";
 import { RotatingLines } from "react-loader-spinner";
 import LandingPage from "./pages/LandingPage";
 import DashboardLayout from "./components/DashboardLayout";
-import Dashboard from "./pages/Dashboard";
+import Dashboard from "./pages/Dashboard/Dashboard";
 import CreateEvent from "./pages/CreateEvent/CreateEvent";
 import FindEvents from "./pages/FindEvents";
 import MyEvents from "./pages/MyEvents";

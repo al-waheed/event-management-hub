@@ -12,6 +12,7 @@ const CreateEvent = ({ nextStep, eventData, updateEventData }) => {
     eventStarttime: eventData.eventStarttime,
     eventEndtime: eventData.eventEndtime,
     eventAddress: eventData.eventAddress,
+    eventDescription: eventData.eventDescription,
   };
 
   const validationSchema = Yup.object().shape({
@@ -38,6 +39,9 @@ const CreateEvent = ({ nextStep, eventData, updateEventData }) => {
     eventAddress: Yup.string()
       .required("Event address is required")
       .min(5, "Address must be more descriptive"),
+    eventDescription: Yup.string()
+      .required("Event description is required")
+      .min(10, "Description must be at least 10 characters"),
   });
 
   const handleCreatEvent = (values) => {
@@ -54,6 +58,7 @@ const CreateEvent = ({ nextStep, eventData, updateEventData }) => {
       >
         {({ values }) => {
           const disabled =
+            !values.eventDescription ||
             !values.eventTitle ||
             !values.eventCategory ||
             !values.eventType ||
@@ -63,7 +68,9 @@ const CreateEvent = ({ nextStep, eventData, updateEventData }) => {
 
           return (
             <Form className="mt-14 max-w-4xl mx-auto space-y-3 h-full">
-              <h4 className="text-xl text-primary md:pl-44">Event Details</h4>
+              <h4 className="text-lg text-primary md:pl-44 font-medium">
+                Event Details
+              </h4>
 
               <div className="md:flex items-center gap-4">
                 <label className="w-40 text-right font-normal text-sm text-primary whitespace-nowrap">
@@ -97,8 +104,8 @@ const CreateEvent = ({ nextStep, eventData, updateEventData }) => {
                 </div>
               </div>
 
-              <div className="pt-7">
-                <h4 className="text-xl text-primary md:pl-44 pb-1">
+              <div className="pt-4">
+                <h4 className="text-lg text-primary md:pl-44 pb-1 font-medium">
                   Date & Time
                 </h4>
                 <div className="md:flex items-center gap-4 pt-2">
@@ -173,8 +180,10 @@ const CreateEvent = ({ nextStep, eventData, updateEventData }) => {
                 </div>
               </div>
 
-              <div className="pt-5">
-                <h4 className="text-xl text-primary md:pl-44 pb-1">Address</h4>
+              <div className="pt-4">
+                <h4 className="text-lg text-primary md:pl-44 pb-1 font-medium">
+                  Address
+                </h4>
                 <div className="md:flex items-center gap-4">
                   <label className="w-40 text-right text-sm font-normal text-primary">
                     Where will your event take place
@@ -188,6 +197,27 @@ const CreateEvent = ({ nextStep, eventData, updateEventData }) => {
                       placeholder="Enter your event address location"
                     />
                     <FormError name="eventAddress" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-4">
+                <h4 className="text-lg text-primary md:pl-44 pb-1 font-medium">
+                  Summary
+                </h4>
+                <div className="md:flex gap-4">
+                  <label className="w-40 text-right text-sm font-normal text-primary">
+                    Event Description
+                    <span className="text-red-500 font-bold">*</span>
+                  </label>
+                  <div className="flex-1 resize-none">
+                    <Field
+                      as="textarea"
+                      name="eventDescription"
+                      className="input h-28"
+                      placeholder="Describe the event in detail..."
+                    />
+                    <FormError name="eventDescription" />
                   </div>
                 </div>
               </div>

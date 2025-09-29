@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import { FormError } from "../../Utils/EventUtils";
@@ -19,14 +19,10 @@ const UploadEventImage = ({
   const dispatch = useDispatch();
 
   const initialValues = {
-    eventDescription: eventData.eventDescription,
     eventBanner: eventData.eventBanner,
   };
 
   const validationSchema = Yup.object().shape({
-    eventDescription: Yup.string()
-      .required("Event description is required")
-      .min(10, "Description must be at least 10 characters"),
     eventBanner: Yup.string().required("An image is required"),
   });
 
@@ -64,31 +60,13 @@ const UploadEventImage = ({
         onSubmit={handleUpdateData}
       >
         {({ values, setFieldValue }) => {
-          const disabled = !values.eventDescription || !values.eventBanner;
+          const disabled = !values.eventBanner;
 
           return (
             <Form className="mt-8 max-w-4xl mx-auto space-y-3">
-              <div className="pt-7">
-                <h4 className="text-2xl text-primary md:pl-44 pb-3">
-                  Additional Information
-                </h4>
-                <div className="md:flex gap-4">
-                  <label className="w-40 text-right text-base font-normal text-primary">
-                    Event Description
-                    <span className="text-red-500 font-bold">*</span>
-                  </label>
-                  <div className="flex-1 resize-none">
-                    <Field
-                      as="textarea"
-                      name="eventDescription"
-                      className="input h-28"
-                      placeholder="Describe the event in detail..."
-                    />
-                    <FormError name="eventDescription" />
-                  </div>
-                </div>
-              </div>
-
+              <h4 className="text-lg text-primary md:pl-44 font-medium">
+                Additional Information
+              </h4>
               <div className="md:flex gap-4">
                 <label className="w-40 text-right font-normal text-base text-primary whitespace-nowrap">
                   Upload Banner
@@ -110,7 +88,7 @@ const UploadEventImage = ({
                   />
                   <label
                     htmlFor="eventBanner"
-                    className="flex items-center w-full justify-center h-28 rounded-md border border-dashed border-primary bg-white text-sm cursor-pointer hover:bg-gray-50 transition"
+                    className="flex items-center w-full justify-center h-36 rounded-md border border-dashed border-primary bg-white text-sm cursor-pointer hover:bg-gray-50 transition"
                   >
                     {fileName ? (
                       <>
@@ -127,7 +105,7 @@ const UploadEventImage = ({
                       <div className="flex flex-col items-center justify-center h-full">
                         <BsCloudArrowUp className="text-3xl text-gray-500 mb-2" />
                         <span className="text-gray-500">
-                          Click to upload image (Max size: 5MB, JPG/PNG)
+                          Click to upload image (Max size: 5MB, JPG/PNG/GIF)
                         </span>
                       </div>
                     )}
