@@ -1,9 +1,12 @@
 import { useState } from "react";
-import { Formik, Form, Field } from "formik";
+import { Formik, Form } from "formik";
 import * as Yup from "yup";
-import { FormError } from "../../Utils/EventUtils";
-import { toast } from "react-toastify";
+import { ref, uploadString, getDownloadURL } from "firebase/storage";
+import { storage } from "../../Auth/Firebase";
+import { formatApiError, FormError } from "../../Utils/EventUtils";
 import { BsCloudArrowUp } from "react-icons/bs";
+import { toast } from "react-toastify";
+import { v4 as uuidv4 } from "uuid";
 
 const bannerSizeLimit = 5 * 1024 * 1024; // 5 MB
 
@@ -14,6 +17,7 @@ const UploadEventImage = ({
   updateEventData,
 }) => {
   const [fileName, setFileName] = useState("");
+  const [error, setError] = useState("");
 
   const initialValues = {
     eventBanner: eventData.eventBanner,
@@ -34,11 +38,21 @@ const UploadEventImage = ({
       toast.error("File must not exceeds 5MB");
       return;
     }
+    const previewBanner = URL.createObjectURL(file);
+    setFieldValue("eventBanner", previewBanner);
+    const bannerId = uuidv4();
+    const bannerRef = ref(storage, `eventBanners/${bannerId}_${file.name}`);
     const reader = new FileReader();
-    reader.onloadend = () => {
-      setFieldValue("eventBanner", reader.result);
-      updateEventData({ eventBanner: reader.result });
-      toast.success("Image uploaded!");
+    reader.onloadend = async () => {
+      try {
+        await uploadString(bannerRef, reader.result, "data_url");
+        const bannerURL = await getDownloadURL(bannerRef);
+        setFieldValue("eventBanner", bannerURL);
+        updateEventData({ eventBanner: bannerURL });
+        toast.success("Image uploaded!");
+      } catch (e) {
+        setError(e.message);
+      }
     };
     reader.readAsDataURL(file);
   };
@@ -54,10 +68,14 @@ const UploadEventImage = ({
 
   return (
     <div>
+      {error && (
+        <div className="text-red-500 text-sm mb-2">{formatApiError(error)}</div>
+      )}
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={handleUpdateData}
+        enableReinitialize
       >
         {({ values, setFieldValue }) => {
           const disabled = !values.eventBanner;
