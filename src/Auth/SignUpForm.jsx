@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { setDoc, doc } from "firebase/firestore";
+import { setDoc, doc, Timestamp } from "firebase/firestore";
 import { auth, db } from "../Auth/Firebase";
 import { toast } from "react-toastify";
 import {
@@ -11,14 +11,14 @@ import {
   FormError,
   togglePassword,
 } from "../Utils/EventUtils";
+import {
+  serviceVerificationId,
+  templateVerificationId,
+  publicKey,
+} from "../Utils/EmailJsService";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { Timestamp } from "firebase/firestore";
 import { send } from "emailjs-com";
 import { ThreeDots } from "react-loader-spinner";
-
-const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
-const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
-const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 
 const signUpValues = {
   fullname: "",
@@ -56,8 +56,8 @@ const SignUpForm = ({ onSwitch, setEmail }) => {
         });
 
         await send(
-          serviceId,
-          templateId,
+          serviceVerificationId,
+          templateVerificationId,
           {
             user_name: fullname,
             user_email: email,

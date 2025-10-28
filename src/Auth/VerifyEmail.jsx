@@ -6,13 +6,14 @@ import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { toast } from "react-toastify";
 import { generateCode, FormError } from "../Utils/EventUtils";
 import { useNavigate } from "react-router-dom";
+import {
+  serviceVerificationId,
+  templateVerificationId,
+  publicKey,
+} from "../Utils/EmailJsService";
 import { useCountdownTimer } from "../hook/useCountdownTimer";
 import { send } from "emailjs-com";
 import { ThreeDots } from "react-loader-spinner";
-
-const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
-const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
-const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 
 const VerifyEmail = ({ email }) => {
   const [error, setError] = useState("");
@@ -66,8 +67,8 @@ const VerifyEmail = ({ email }) => {
 
       await updateDoc(ref, { code });
       await send(
-        serviceId,
-        templateId,
+        serviceVerificationId,
+        templateVerificationId,
         {
           user_name: userData.fullname,
           user_email: userData.email,

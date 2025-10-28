@@ -75,7 +75,6 @@ const UploadEventImage = ({
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={handleUpdateData}
-        enableReinitialize
       >
         {({ values, setFieldValue }) => {
           const disabled = !values.eventBanner;

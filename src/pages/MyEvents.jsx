@@ -1,8 +1,12 @@
+import { useState } from "react";
 import { RotatingLines } from "react-loader-spinner";
 import { useUserData } from "../queries/UserQueries";
 import { FaRegStar } from "react-icons/fa";
+import InviteUserModal from "../modal/InviteUserModal";
 
 const MyEvents = () => {
+  const [openInviteModal, setOpenInviteModal] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
   const { data: userData, isLoading } = useUserData();
   const events = userData?.events || [];
 
@@ -50,9 +54,10 @@ const MyEvents = () => {
                   </span>
                   <button
                     className="absolute top-2 right-2 bg-white p-2 rounded-full shadow hover:bg-yellow transition"
-                    onClick={() =>
-                      console.log("Open invite modal for:", event.id)
-                    }
+                    onClick={() => {
+                      setSelectedEvent(event);
+                      setOpenInviteModal(!openInviteModal);
+                    }}
                   >
                     <FaRegStar className="text-primary text-lg hover:bg-yellow" />
                   </button>
@@ -65,6 +70,9 @@ const MyEvents = () => {
                   <div className="flex-1">
                     <h2 className="text-base font-semibold text-primary mb-1 line-clamp-1">
                       {event.eventTitle}
+                    </h2>
+                    <h2 className="text-sm font-medium capitalize text-primary mb-1 line-clamp-1">
+                      {event.eventDescription}
                     </h2>
                     <p className="text-sm text-gray-600 line-clamp-1">
                       {event.eventAddress}
@@ -83,6 +91,13 @@ const MyEvents = () => {
               </div>
             );
           })}
+          {openInviteModal && (
+            <InviteUserModal
+              openInviteModal={openInviteModal}
+              toggleModal={() => setOpenInviteModal(!openInviteModal)}
+              event={selectedEvent}
+            />
+          )}
         </div>
       )}
     </div>

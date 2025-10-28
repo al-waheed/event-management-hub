@@ -9,6 +9,11 @@ import { toast } from "react-toastify";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import ForgotPasswordModal from "../modal/ForgotPasswordModal";
 import {
+  serviceVerificationId,
+  templateVerificationId,
+  publicKey,
+} from "../Utils/EmailJsService";
+import {
   formatApiError,
   generateCode,
   FormError,
@@ -16,10 +21,6 @@ import {
 } from "../Utils/EventUtils";
 import { send } from "emailjs-com";
 import { ThreeDots } from "react-loader-spinner";
-
-const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
-const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
-const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 
 const signInValues = { email: "", password: "" };
 
@@ -55,8 +56,8 @@ const SignInForm = ({ onSwitch, setEmail }) => {
           const code = generateCode();
           await updateDoc(ref, { code });
           await send(
-            serviceId,
-            templateId,
+            serviceVerificationId,
+            templateVerificationId,
             {
               user_name: userData.fullname,
               user_email: userData.email,
