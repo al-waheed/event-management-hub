@@ -6,19 +6,14 @@ import { send } from "emailjs-com";
 import { ThreeDots } from "react-loader-spinner";
 import { toast } from "react-toastify";
 import { auth, db } from "../Auth/Firebase";
-import {
-  getDoc,
-  doc,
-  updateDoc,
-  arrayUnion,
-  Timestamp,
-} from "firebase/firestore";
+import { getDoc, doc, updateDoc, Timestamp } from "firebase/firestore";
 import {
   serviceInviteId,
   templateInviteId,
   publicKey,
 } from "../Utils/EmailJsService";
 import { formatApiError, FormError } from "../Utils/EventUtils";
+import { useUserData } from "../queries/UserQueries";
 import { FaTimes, FaPlus } from "react-icons/fa";
 
 const InviteUserSchema = Yup.object().shape({
@@ -30,32 +25,31 @@ const InviteUserSchema = Yup.object().shape({
 });
 
 const InviteUserModal = ({ openInviteModal, toggleModal, event }) => {
+  const { data: userDetails } = useUserData();
   const [error, setError] = useState("");
+
   const handleInviteUser = async (values, { resetForm, setSubmitting }) => {
     setError("");
     setSubmitting(true);
 
+    const updatedEvents = userDetails.events.map((ev) => {
+      if (ev.id === event.id) {
+        const newInvites = values.emails.map((email) => ({
+          email,
+          status: "pending",
+          invitedAt: Timestamp.now(),
+        }));
+
+        return {
+          ...ev,
+          invites: [...existingInvites, ...newInvites],
+        };
+      }
+      return ev;
+    });
+
     try {
-      const ref = doc(db, "user", auth.currentUser.uid);
-      const snap = await getDoc(ref);
-      const userData = snap.data();
-      const updatedEvents = userData.events.map((ev) => {
-        if (ev.id === event.id) {
-          const existingInvites = ev.invites || [];
-          const newInvites = values.emails.map((email) => ({
-            email,
-            status: "pending",
-            invitedAt: Timestamp.now(),
-          }));
-
-          return {
-            ...ev,
-            invites: [...existingInvites, ...newInvites],
-          };
-        }
-        return ev;
-      });
-
+      const ref = doc(db, "users", auth.currentUser.uid);
       await updateDoc(ref, { events: updatedEvents });
 
       for (const email of values.emails) {
@@ -65,19 +59,19 @@ const InviteUserModal = ({ openInviteModal, toggleModal, event }) => {
           {
             to_email: email,
             event_title: event.eventTitle,
-            inviter_email: auth.currentUser.email,
+            inviter_name: userDetails?.fullname,
+            event_date: event.eventDate,
+            event_address: event.eventAddress,
           },
           publicKey
         );
       }
-
       toast.success(
         `Invites sent successfully to ${values.emails.length} user(s)!`
       );
       resetForm();
       toggleModal();
     } catch (err) {
-      console.error("Error inviting users:", err);
       setError(err.message);
     } finally {
       setSubmitting(false);
@@ -123,7 +117,7 @@ const InviteUserModal = ({ openInviteModal, toggleModal, event }) => {
               validateOnBlur={true}
               validateOnChange={false}
             >
-              {({ values, errors, touched, isValid, isSubmitting }) => {
+              {({ values, errors, touched, isSubmitting }) => {
                 const allEmpty = values.emails.every((e) => e.trim() === "");
 
                 return (
@@ -179,9 +173,20 @@ const InviteUserModal = ({ openInviteModal, toggleModal, event }) => {
                     <button
                       type="submit"
                       className="w-full btn btn-primary font-bold focus:outline-none"
-                      disabled={!isValid || allEmpty || isSubmitting}
+                      disabled={allEmpty || isSubmitting}
                     >
-                      {isSubmitting ? "Sending..." : "Send Invites"}
+                      {isSubmitting ? (
+                        <ThreeDots
+                          visible={true}
+                          height="25"
+                          width="25"
+                          radius="9"
+                          color="#ffffff"
+                          ariaLabel="three-dots-loading"
+                        />
+                      ) : (
+                        "Send Invites"
+                      )}
                     </button>
                   </Form>
                 );

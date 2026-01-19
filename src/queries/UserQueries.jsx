@@ -12,7 +12,15 @@ export const useUserData = () => {
       if (!snapshot.exists()) {
         throw new Error("No user data found");
       }
-      return snapshot.data();
+      const userData = snapshot.data();
+      if (userData.events) {
+        userData.events = userData.events.slice().sort((a, b) => {
+          const aTime = a?.createdAt?.seconds || 0;
+          const bTime = b?.createdAt?.seconds || 0;
+          return bTime - aTime;
+        });
+      }
+      return userData;
     },
   });
-}
+};

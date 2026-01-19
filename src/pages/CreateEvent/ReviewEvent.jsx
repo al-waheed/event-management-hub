@@ -19,12 +19,13 @@ const ReviewEvent = ({ previouStep, eventData }) => {
     setError("");
     setLoading(true);
     try {
+      const payload = userEventDetails || eventData;
       const ref = doc(db, "users", auth.currentUser.uid);
       await setDoc(
         ref,
         {
           events: arrayUnion({
-            ...eventData,
+            ...payload,
             createdAt: Timestamp.now(),
             id: crypto.randomUUID(),
           }),
