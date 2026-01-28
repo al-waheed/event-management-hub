@@ -1,6 +1,6 @@
 import React from "react";
 
-const EventCardUtils = (props) => {
+const EventModalUtils = (props) => {
   const {
     Banner,
     Starttime,
@@ -95,4 +95,4 @@ const EventCardUtils = (props) => {
     </div>
   );
 };
-export default EventCardUtils;
+export default EventModalUtils;

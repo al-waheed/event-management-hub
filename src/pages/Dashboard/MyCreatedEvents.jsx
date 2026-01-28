@@ -1,11 +1,9 @@
 import { useState } from "react";
 import { MdOutlineDateRange } from "react-icons/md";
 import { IoIosArrowForward } from "react-icons/io";
-import { useUsersEventData } from "../../queries/DataQueries";
-import EventCardUtils from "../../Utils/EventCardUtils";
+import EventModalUtils from "../../Utils/EventModalUtils";
 
-const MyCreatedEvents = () => {
-  const { data: userEvents, isLoading } = useUsersEventData();
+const MyCreatedEvents = ({ userEvents }) => {
   const [selectedEvent, setSelectedEvent] = useState(null);
 
   return (
@@ -59,7 +57,7 @@ const MyCreatedEvents = () => {
             <p className="text-sm text-primary mb-4">
               Here you can display more details about the selected event.
             </p>
-            <EventCardUtils
+            <EventModalUtils
               Banner={selectedEvent.eventBanner}
               Starttime={selectedEvent.eventStarttime}
               Session={selectedEvent.eventSession}

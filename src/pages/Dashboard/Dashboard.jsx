@@ -1,9 +1,10 @@
 import { NavLink } from "react-router-dom";
 import EventLists from "./EventLists";
-import { useUserData } from "../../queries/DataQueries";
+import { useUserData, useUsersEventData } from "../../queries/DataQueries";
 
 const Dashboard = () => {
   const { data: userData, isLoading } = useUserData();
+  const { data: userEvents } = useUsersEventData();
 
   return (
     <div>
@@ -21,14 +22,14 @@ const Dashboard = () => {
               <span className="text-slate-900">{userData?.fullname}</span>
             </h1>
             <p className="mt-1 text-sm text-gray-500">
-              Good to see you — here’s a quick summary of your events.
+              Good to see you here’s a quick summary of your events.
             </p>
           </div>
         </div>
         <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="bg-gray-50 border rounded-2xl p-4 text-center shadow-sm">
             <div className="text-3xl sm:text-4xl font-semibold text-primary">
-              {userData?.events?.length || 0}
+              {userEvents?.length}
             </div>
             <div className="mt-1 text-sm text-primary">Events Created</div>
           </div>
@@ -56,7 +57,7 @@ const Dashboard = () => {
         </NavLink>
       </div>
       <div className="max-w-6xl mx-auto mt-8">
-        <EventLists />
+        <EventLists userEvents={userEvents} />
       </div>
     </div>
   );

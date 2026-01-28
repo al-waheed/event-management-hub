@@ -3,7 +3,7 @@ import { addDoc, collection, Timestamp } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { auth, db } from "../../Auth/Firebase";
-import EventCardUtils from "../../Utils/EventCardUtils";
+import EventModalUtils from "../../Utils/EventModalUtils";
 import { formatApiError } from "../../Utils/EventUtils";
 import { ThreeDots } from "react-loader-spinner";
 import { toast } from "react-toastify";
@@ -29,7 +29,8 @@ const ReviewEvent = ({ previouStep, eventData }) => {
         createdBy: auth.currentUser.uid,
       });
       localStorage.removeItem("eventData");
-      //await queryClient.invalidateQueries({ queryKey: ["userData"] });
+      await queryClient.invalidateQueries({ queryKey: ["userEvents"] });
+      await queryClient.invalidateQueries({ queryKey: ["allEvents"] });
       toast.success("Event created successfully!");
       navigate("/dashboard/my-events");
     } catch (e) {
@@ -48,7 +49,7 @@ const ReviewEvent = ({ previouStep, eventData }) => {
       {error && (
         <div className="text-red-500 text-sm">{formatApiError(error)}</div>
       )}
-      <EventCardUtils
+      <EventModalUtils
         Banner={eventData.eventBanner}
         Starttime={eventData.eventStarttime}
         Session={eventData.eventSession}

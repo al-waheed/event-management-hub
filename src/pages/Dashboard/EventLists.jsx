@@ -4,7 +4,7 @@ import AttendingEvents from "./AttendingEvents";
 
 const tabs = ["My Created Events", "Event I'm Attending"];
 
-const EventLists = () => {
+const EventLists = ({ userEvents }) => {
   const [activeTab, setActiveTab] = useState(tabs[0]);
 
   return (
@@ -28,7 +28,9 @@ const EventLists = () => {
         </ul>
       </div>
       <div className="mt-4">
-        {activeTab === "My Created Events" && <MyCreatedEvents />}
+        {activeTab === "My Created Events" && (
+          <MyCreatedEvents userEvents={userEvents} />
+        )}
         {activeTab === "Event I'm Attending" && <AttendingEvents />}
       </div>
     </div>
