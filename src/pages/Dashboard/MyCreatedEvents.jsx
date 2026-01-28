@@ -1,15 +1,17 @@
 import { useState } from "react";
 import { MdOutlineDateRange } from "react-icons/md";
 import { IoIosArrowForward } from "react-icons/io";
+import { useUsersEventData } from "../../queries/DataQueries";
 import EventCardUtils from "../../Utils/EventCardUtils";
 
-const MyCreatedEvents = ({ createdEvents }) => {
+const MyCreatedEvents = () => {
+  const { data: userEvents, isLoading } = useUsersEventData();
   const [selectedEvent, setSelectedEvent] = useState(null);
 
   return (
     <div className="p-4 space-y-3">
-      {createdEvents.length > 0 ? (
-        createdEvents.map((event) => (
+      {!!userEvents && userEvents.length > 0 ? (
+        userEvents.map((event) => (
           <div
             key={event.id}
             className="flex items-center justify-between p-4 rounded-lg shadow-sm border bg-white hover:shadow-md transition"

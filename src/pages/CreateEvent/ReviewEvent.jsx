@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { setDoc, doc, arrayUnion, Timestamp } from "firebase/firestore";
+import { addDoc, collection, Timestamp } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { auth, db } from "../../Auth/Firebase";
 import EventCardUtils from "../../Utils/EventCardUtils";
 import { formatApiError } from "../../Utils/EventUtils";
@@ -11,6 +12,7 @@ const ReviewEvent = ({ previouStep, eventData }) => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const userEventDetails = localStorage.getItem("eventData")
     ? JSON.parse(localStorage.getItem("eventData"))
     : eventData;
@@ -20,19 +22,14 @@ const ReviewEvent = ({ previouStep, eventData }) => {
     setLoading(true);
     try {
       const payload = userEventDetails || eventData;
-      const ref = doc(db, "users", auth.currentUser.uid);
-      await setDoc(
-        ref,
-        {
-          events: arrayUnion({
-            ...payload,
-            createdAt: Timestamp.now(),
-            id: crypto.randomUUID(),
-          }),
-        },
-        { merge: true }
-      );
+      const ref = collection(db, "events");
+      await addDoc(ref, {
+        ...payload,
+        createdAt: Timestamp.now(),
+        createdBy: auth.currentUser.uid,
+      });
       localStorage.removeItem("eventData");
+      //await queryClient.invalidateQueries({ queryKey: ["userData"] });
       toast.success("Event created successfully!");
       navigate("/dashboard/my-events");
     } catch (e) {

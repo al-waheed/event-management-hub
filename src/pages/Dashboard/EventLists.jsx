@@ -1,14 +1,11 @@
 import { useState } from "react";
 import MyCreatedEvents from "./MyCreatedEvents";
 import AttendingEvents from "./AttendingEvents";
-import { useUserData } from "../../queries/UserQueries";
 
 const tabs = ["My Created Events", "Event I'm Attending"];
 
 const EventLists = () => {
   const [activeTab, setActiveTab] = useState(tabs[0]);
-  const { data: userData, isLoading } = useUserData();
-  const createdEvents = userData?.events || [];
 
   return (
     <div>
@@ -31,9 +28,7 @@ const EventLists = () => {
         </ul>
       </div>
       <div className="mt-4">
-        {activeTab === "My Created Events" && (
-          <MyCreatedEvents createdEvents={createdEvents} />
-        )}
+        {activeTab === "My Created Events" && <MyCreatedEvents />}
         {activeTab === "Event I'm Attending" && <AttendingEvents />}
       </div>
     </div>

@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
 import EventLists from "./EventLists";
-import { useUserData } from "../../queries/UserQueries";
+import { useUserData } from "../../queries/DataQueries";
 
 const Dashboard = () => {
   const { data: userData, isLoading } = useUserData();
@@ -43,7 +43,7 @@ const Dashboard = () => {
           <div className="bg-gray-50 border rounded-2xl p-4 text-center shadow-sm">
             <div className="text-2xl font-semibold text-primary">
               {new Date(
-                userData?.createdAt?.seconds * 1000
+                userData?.createdAt?.seconds * 1000,
               ).toLocaleDateString()}{" "}
             </div>
             <div className="mt-1 text-sm text-primary">Member since</div>

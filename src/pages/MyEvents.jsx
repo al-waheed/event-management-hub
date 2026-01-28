@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { RotatingLines } from "react-loader-spinner";
-import { useUserData } from "../queries/UserQueries";
+import { useUsersEventData } from "../queries/DataQueries";
 import { FaRegStar } from "react-icons/fa";
 import InviteUserModal from "../modal/InviteUserModal";
 
 const MyEvents = () => {
   const [openInviteModal, setOpenInviteModal] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const { data: userData, isLoading } = useUserData();
-  const events = userData?.events || [];
+  const { data: userEvents, isLoading } = useUsersEventData();
+  const events = userEvents || [];
 
   return (
     <div className="p-6">

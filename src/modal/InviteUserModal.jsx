@@ -6,33 +6,33 @@ import { send } from "emailjs-com";
 import { ThreeDots } from "react-loader-spinner";
 import { toast } from "react-toastify";
 import { auth, db } from "../Auth/Firebase";
-import { getDoc, doc, updateDoc, Timestamp } from "firebase/firestore";
+import { doc, updateDoc, Timestamp } from "firebase/firestore";
 import {
   serviceInviteId,
   templateInviteId,
   publicKey,
 } from "../Utils/EmailJsService";
 import { formatApiError, FormError } from "../Utils/EventUtils";
-import { useUserData } from "../queries/UserQueries";
+import { useUsersEventData } from "../queries/DataQueries";
 import { FaTimes, FaPlus } from "react-icons/fa";
 
 const InviteUserSchema = Yup.object().shape({
   emails: Yup.array()
     .of(
-      Yup.string().email("Invalid email format").required("Email is required")
+      Yup.string().email("Invalid email format").required("Email is required"),
     )
     .min(1, "At least one email is required"),
 });
 
 const InviteUserModal = ({ openInviteModal, toggleModal, event }) => {
-  const { data: userDetails } = useUserData();
+  const { data: userEvents } = useUsersEventData();
   const [error, setError] = useState("");
 
   const handleInviteUser = async (values, { resetForm, setSubmitting }) => {
     setError("");
     setSubmitting(true);
 
-    const updatedEvents = userDetails.events.map((ev) => {
+    const updatedEvents = userEvents.map((ev) => {
       if (ev.id === event.id) {
         const newInvites = values.emails.map((email) => ({
           email,
@@ -63,11 +63,11 @@ const InviteUserModal = ({ openInviteModal, toggleModal, event }) => {
             event_date: event.eventDate,
             event_address: event.eventAddress,
           },
-          publicKey
+          publicKey,
         );
       }
       toast.success(
-        `Invites sent successfully to ${values.emails.length} user(s)!`
+        `Invites sent successfully to ${values.emails.length} user(s)!`,
       );
       resetForm();
       toggleModal();
