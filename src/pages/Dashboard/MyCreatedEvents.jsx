@@ -15,7 +15,7 @@ const MyCreatedEvents = ({ userEvents }) => {
             className="flex items-center justify-between p-4 rounded-lg shadow-sm border bg-white hover:shadow-md transition"
           >
             <div>
-              <h3 className="font-bold text-lg text-primary">
+              <h3 className="font-bold text-lg text-primary truncate max-w-[150px]">
                 {event.eventTitle}
               </h3>
               <p className="text-sm text-primary">{event.eventCategory}</p>

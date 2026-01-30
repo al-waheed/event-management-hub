@@ -5,6 +5,7 @@ import { useUserData, useUsersEventData } from "../../queries/DataQueries";
 const Dashboard = () => {
   const { data: userData, isLoading } = useUserData();
   const { data: userEvents } = useUsersEventData();
+  console.log("User Events:", userEvents);
 
   return (
     <div>
@@ -29,7 +30,7 @@ const Dashboard = () => {
         <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="bg-gray-50 border rounded-2xl p-4 text-center shadow-sm">
             <div className="text-3xl sm:text-4xl font-semibold text-primary">
-              {userEvents?.length}
+              {userEvents?.length || 0}
             </div>
             <div className="mt-1 text-sm text-primary">Events Created</div>
           </div>

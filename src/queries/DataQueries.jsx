@@ -31,13 +31,13 @@ export const useUsersEventData = () => {
     queryKey: ["userEvents", uid],
     enabled: !!uid,
     queryFn: async () => {
+       if(!uid) return [];
       const event = query(
         collection(db, "events"),
         where("createdBy", "==", uid),
         orderBy("createdAt", "desc"),
       );
       const snapshot = await getDocs(event);
-
       return snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
