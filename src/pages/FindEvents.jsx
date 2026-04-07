@@ -1,17 +1,90 @@
+import { useState } from "react";
+import { RotatingLines } from "react-loader-spinner";
 import { useAllEventsData } from "../queries/DataQueries";
-import EventCards from "../Utils/EventCards";
+import EventCard from "../Utils/EventCards";
+import EventModalUtils from "../Utils/EventModalUtils";
+import InviteUserModal from "../modal/InviteUserModal";
 
 const FindEvents = () => {
-  const { data: allEvents } = useAllEventsData();
+  const { data: allEvents, isLoading } = useAllEventsData();
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [openInviteModal, setOpenInviteModal] = useState(false);
+  const [inviteEvent, setInviteEvent] = useState(null);
+
+  const closeEventDetails = () => {
+    setSelectedEvent(null);
+  };
 
   return (
-    <div>
+    <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Find Events</h1>
-      <p>Find created events here.</p>
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mt-5">
-        {allEvents &&
-          allEvents.map((event) => <EventCards key={event.id} event={event} />)}
-      </div>
+      <p className="text-gray-700 mb-6">Find created events here.</p>
+
+      {isLoading ? (
+        <div className="flex justify-center items-center h-40">
+          <RotatingLines
+            visible={true}
+            height="80"
+            width="80"
+            strokeWidth="4"
+            strokeColor="#2B293D"
+            animationDuration="0.75"
+            ariaLabel="rotating-lines-loading"
+          />
+        </div>
+      ) : !allEvents || allEvents.length === 0 ? (
+        <p className="text-gray-600">No events found.</p>
+      ) : (
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {allEvents.map((event) => (
+            <EventCard
+              key={event.id}
+              event={event}
+              onCardClick={(clickedEvent) => setSelectedEvent(clickedEvent)}
+              onStarClick={(clickedEvent) => {
+                setInviteEvent(clickedEvent);
+                setOpenInviteModal(true);
+              }}
+            />
+          ))}
+        </div>
+      )}
+
+      {selectedEvent && (
+        <div className="fixed inset-0 bg-primary bg-opacity-50 flex items-center justify-center z-50">
+          <div className="mt-4 p-4 border rounded-lg bg-gray-50 shadow-md w-[70%] relative overflow-y-auto max-h-[100vh]">
+            <button
+              className="absolute top-0 right-3 text-primary hover:text-primary-hover text-2xl"
+              onClick={closeEventDetails}
+            >
+              &times;
+            </button>
+
+            <h4 className="font-semibold text-primary mb-2">Event Details</h4>
+            <EventModalUtils
+              Banner={selectedEvent.eventBanner}
+              Starttime={selectedEvent.eventStarttime}
+              Session={selectedEvent.eventSession}
+              Endtime={selectedEvent.eventEndtime}
+              Category={selectedEvent.eventCategory}
+              Type={selectedEvent.eventType}
+              Title={selectedEvent.eventTitle}
+              Address={selectedEvent.eventAddress}
+              Description={selectedEvent.eventDescription}
+              Visibility={selectedEvent.eventVisibility}
+              invitedUsers={selectedEvent}
+            />
+          </div>
+        </div>
+      )}
+
+      {openInviteModal && (
+        <InviteUserModal
+          openInviteModal={openInviteModal}
+          toggleModal={() => setOpenInviteModal(!openInviteModal)}
+          event={inviteEvent}
+        />
+      )}
     </div>
   );
 };

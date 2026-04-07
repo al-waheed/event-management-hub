@@ -3,12 +3,18 @@ import { RotatingLines } from "react-loader-spinner";
 import { useUsersEventData } from "../queries/DataQueries";
 import InviteUserModal from "../modal/InviteUserModal";
 import EventCard from "../Utils/EventCards";
+import EventModalUtils from "../Utils/EventModalUtils";
 
 const MyEvents = () => {
   const [openInviteModal, setOpenInviteModal] = useState(false);
+  const [inviteEvent, setInviteEvent] = useState(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const { data: userEvents, isLoading } = useUsersEventData();
   const events = userEvents || [];
+
+  const closeEventDetails = () => {
+    setSelectedEvent(null);
+  };
 
   return (
     <div className="p-6">
@@ -35,20 +41,50 @@ const MyEvents = () => {
             <EventCard
               key={event.id}
               event={event}
+              onCardClick={(clickedEvent) => setSelectedEvent(clickedEvent)}
               onStarClick={(clickedEvent) => {
-                setSelectedEvent(clickedEvent);
+                setInviteEvent(clickedEvent);
                 setOpenInviteModal(true);
               }}
             />
           ))}
-          {openInviteModal && (
-            <InviteUserModal
-              openInviteModal={openInviteModal}
-              toggleModal={() => setOpenInviteModal(!openInviteModal)}
-              event={selectedEvent}
-            />
-          )}
         </div>
+      )}
+
+      {selectedEvent && (
+        <div className="fixed inset-0 bg-primary bg-opacity-50 flex items-center justify-center z-50">
+          <div className="mt-4 p-4 border rounded-lg bg-gray-50 shadow-md w-[70%] relative overflow-y-auto max-h-[100vh]">
+            <button
+              className="absolute top-0 right-3 text-primary hover:text-primary-hover text-2xl"
+              onClick={closeEventDetails}
+            >
+              &times;
+            </button>
+
+            <h4 className="font-semibold text-primary mb-2">Event Details</h4>
+            <EventModalUtils
+              Banner={selectedEvent.eventBanner}
+              Starttime={selectedEvent.eventStarttime}
+              Session={selectedEvent.eventSession}
+              Endtime={selectedEvent.eventEndtime}
+              Category={selectedEvent.eventCategory}
+              Type={selectedEvent.eventType}
+              Title={selectedEvent.eventTitle}
+              Address={selectedEvent.eventAddress}
+              Description={selectedEvent.eventDescription}
+              Visibility={selectedEvent.eventVisibility}
+              invitedUsers={selectedEvent}
+            />
+          </div>
+        </div>
+      )}
+
+      {openInviteModal && (
+        <InviteUserModal
+          openInviteModal={openInviteModal}
+          toggleModal={() => setOpenInviteModal(!openInviteModal)}
+          event={inviteEvent}
+        />
       )}
     </div>
   );

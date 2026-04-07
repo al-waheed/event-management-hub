@@ -5,7 +5,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { send } from "emailjs-com";
 import { ThreeDots } from "react-loader-spinner";
 import { toast } from "react-toastify";
-import { auth, db } from "../Auth/Firebase";
+import { db } from "../Auth/Firebase";
+import { FaTimes, FaPlus } from "react-icons/fa";
 import { doc, updateDoc, Timestamp } from "firebase/firestore";
 import {
   serviceInviteId,
@@ -13,8 +14,8 @@ import {
   publicKey,
 } from "../Utils/EmailJsService";
 import { formatApiError, FormError } from "../Utils/EventUtils";
-import { useUsersEventData } from "../queries/DataQueries";
-import { FaTimes, FaPlus } from "react-icons/fa";
+import { useUserData } from "../queries/DataQueries";
+import { useQueryClient } from "@tanstack/react-query";
 
 const InviteUserSchema = Yup.object().shape({
   emails: Yup.array()
@@ -25,32 +26,38 @@ const InviteUserSchema = Yup.object().shape({
 });
 
 const InviteUserModal = ({ openInviteModal, toggleModal, event }) => {
-  const { data: userEvents } = useUsersEventData();
+  const { data: userDetails } = useUserData();
+  const queryClient = useQueryClient();
   const [error, setError] = useState("");
 
   const handleInviteUser = async (values, { resetForm, setSubmitting }) => {
     setError("");
     setSubmitting(true);
 
-    const updatedEvents = userEvents.map((ev) => {
-      if (ev.id === event.id) {
-        const newInvites = values.emails.map((email) => ({
-          email,
-          status: "pending",
-          invitedAt: Timestamp.now(),
-        }));
+    const existingEmails = (event?.invites || []).map((inv) => inv.email.toLowerCase());
+    const duplicates = values.emails.filter((email) =>
+      existingEmails.includes(email.toLowerCase())
+    );
 
-        return {
-          ...ev,
-          invites: [...existingInvites, ...newInvites],
-        };
-      }
-      return ev;
-    });
+    if (duplicates.length > 0) {
+      setError(`Already invited: ${duplicates.join(", ")}`);
+      setSubmitting(false);
+      return;
+    }
+
+    const newInvites = values.emails.map((email) => ({
+      email,
+      status: "pending",
+      invitedAt: Timestamp.now(),
+    }));
+
+    const updatedInvites = event?.invites
+      ? [...event.invites, ...newInvites]
+      : newInvites;
 
     try {
-      const ref = doc(db, "users", auth.currentUser.uid);
-      await updateDoc(ref, { events: updatedEvents });
+      const ref = doc(db, "events", event.id);
+      await updateDoc(ref, { invites: updatedInvites });
 
       for (const email of values.emails) {
         await send(
@@ -66,6 +73,7 @@ const InviteUserModal = ({ openInviteModal, toggleModal, event }) => {
           publicKey,
         );
       }
+      await queryClient.invalidateQueries({ queryKey: ["userEvents"] });
       toast.success(
         `Invites sent successfully to ${values.emails.length} user(s)!`,
       );

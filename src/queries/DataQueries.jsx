@@ -25,6 +25,18 @@ export const useUserData = () => {
   });
 };
 
+export const useUserDataById = (uid) => {
+  return useQuery({
+    queryKey: ["userData", uid],
+    enabled: !!uid,
+    queryFn: async () => {
+      const snapshot = await getDoc(doc(db, "users", uid));
+      if (!snapshot.exists()) return null;
+      return { id: snapshot.id, ...snapshot.data() };
+    },
+  });
+};
+
 export const useUsersEventData = () => {
   const uid = auth.currentUser?.uid;
   return useQuery({
@@ -42,6 +54,36 @@ export const useUsersEventData = () => {
         id: doc.id,
         ...doc.data(),
       }));
+    },
+  });
+};
+
+export const useAttendingEventsData = () => {
+  const uid = auth.currentUser?.uid;
+  return useQuery({
+    queryKey: ["attendingEvents", uid],
+    enabled: !!uid,
+    queryFn: async () => {
+      if (!uid) return [];
+      const userSnap = await getDoc(doc(db, "users", uid));
+      if (!userSnap.exists()) return [];
+      const userEmail = userSnap.data().email?.toLowerCase();
+      if (!userEmail) return [];
+
+      const allEventsQuery = query(
+        collection(db, "events"),
+        orderBy("createdAt", "desc"),
+      );
+      const snapshot = await getDocs(allEventsQuery);
+      return snapshot.docs
+        .map((doc) => ({ id: doc.id, ...doc.data() }))
+        .filter(
+          (event) =>
+            event.createdBy !== uid &&
+            (event.invites || []).some(
+              (inv) => inv.email?.toLowerCase() === userEmail
+            )
+        );
     },
   });
 };

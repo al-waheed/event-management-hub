@@ -59,6 +59,7 @@ const ReviewEvent = ({ previouStep, eventData }) => {
         Title={eventData.eventTitle}
         Address={eventData.eventAddress}
         Description={eventData.eventDescription}
+        Visibility={eventData.eventVisibility}
       />
 
       <div className="flex justify-end gap-4">

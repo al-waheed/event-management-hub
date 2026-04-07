@@ -6,10 +6,10 @@ const Logo = ({ bg }) => {
           bg ? "bg-white text-primary" : "bg-primary text-white"
         }`}
       >
-        EH
+        EC
       </div>
       <span className="ml-2 text-3xl font-bold italic text-yellow">
-        EventHub
+        EventCloud
       </span>
     </div>
   );

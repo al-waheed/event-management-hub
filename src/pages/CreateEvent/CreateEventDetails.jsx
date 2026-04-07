@@ -1,5 +1,13 @@
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
+import {
+  MdOutlineTitle,
+  MdCategory,
+  MdOutlineDateRange,
+  MdAccessTime,
+  MdLocationOn,
+  MdDescription,
+} from "react-icons/md";
 import { FormError, listOfEvent } from "../../Utils/EventUtils";
 
 const CreateEvent = ({ nextStep, eventData, updateEventData }) => {
@@ -66,16 +74,17 @@ const CreateEvent = ({ nextStep, eventData, updateEventData }) => {
             !values.eventAddress;
 
           return (
-            <Form className="mt-14 max-w-4xl mx-auto space-y-3 h-full">
-              <h4 className="text-lg text-primary md:pl-44 font-medium">
-                Event Details
-              </h4>
+            <Form className="mt-8 max-w-2xl mx-auto space-y-5">
+              <div className="bg-white rounded-2xl border border-gray-100 p-5 space-y-4">
+                <h4 className="text-sm font-semibold text-primary uppercase tracking-wide flex items-center gap-2">
+                  <MdOutlineTitle className="text-lg" />
+                  Event Details
+                </h4>
 
-              <div className="md:flex items-center gap-4">
-                <label className="w-40 text-right font-normal text-sm text-primary whitespace-nowrap">
-                  Event Title <span className="text-red-500 font-bold">*</span>
-                </label>
-                <div className="w-full md:flex-1">
+                <div className="space-y-1">
+                  <label className="text-xs font-medium text-gray-500">
+                    Event Title <span className="text-red-500">*</span>
+                  </label>
                   <Field
                     name="eventTitle"
                     type="text"
@@ -84,14 +93,11 @@ const CreateEvent = ({ nextStep, eventData, updateEventData }) => {
                   />
                   <FormError name="eventTitle" />
                 </div>
-              </div>
 
-              <div className="md:flex items-center gap-4 pt-2">
-                <label className="w-40 text-right whitespace-nowrap text-sm font-normal text-primary">
-                  Event Category{" "}
-                  <span className="text-red-500 font-bold">*</span>
-                </label>
-                <div className="w-full md:flex-1">
+                <div className="space-y-1">
+                  <label className="text-xs font-medium text-gray-500">
+                    Event Category <span className="text-red-500">*</span>
+                  </label>
                   <Field as="select" name="eventCategory" className="input">
                     {listOfEvent.map((option) => (
                       <option key={option.value} value={option.value}>
@@ -103,129 +109,125 @@ const CreateEvent = ({ nextStep, eventData, updateEventData }) => {
                 </div>
               </div>
 
-              <div className="pt-4">
-                <h4 className="text-lg text-primary md:pl-44 pb-1 font-medium">
+              <div className="bg-white rounded-2xl border border-gray-100 p-5 space-y-4">
+                <h4 className="text-sm font-semibold text-primary uppercase tracking-wide flex items-center gap-2">
+                  <MdOutlineDateRange className="text-lg" />
                   Date & Time
                 </h4>
-                <div className="md:flex items-center gap-4 pt-2">
-                  <label className="w-40 text-right whitespace-nowrap text-sm font-normal text-primary">
-                    Event Type <span className="text-red-500 font-bold">*</span>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-medium text-gray-500">
+                    Event Type <span className="text-red-500">*</span>
                   </label>
-                  <div className="flex items-center gap-10">
-                    <label className="inline-flex items-center gap-2 cursor-pointer">
+                  <div className="flex items-center gap-4">
+                    <label className="flex-1 relative cursor-pointer">
                       <Field
                         type="radio"
                         name="eventType"
                         value="single"
-                        className="appearance-none h-3 w-3 rounded-full border border-[#2B293D] checked:bg-[#2B293D] checked:ring-2 checked:ring-offset-1 ring-[#2B293D]"
+                        className="peer sr-only"
                       />
-                      <span className="text-primary text-sm font-medium">
+                      <div className="p-3 rounded-xl border border-gray-200 text-center text-sm font-medium text-gray-500 peer-checked:border-primary peer-checked:bg-primary/5 peer-checked:text-primary transition">
                         Single Event
-                      </span>
+                      </div>
                     </label>
-                    <label className="inline-flex items-center gap-2 cursor-pointer">
+                    <label className="flex-1 relative cursor-pointer">
                       <Field
                         type="radio"
                         name="eventType"
                         value="recurring"
-                        className="appearance-none h-3 w-3 rounded-full border border-[#2B293D] checked:bg-[#2B293D] checked:ring-2 checked:ring-offset-1 ring-[#2B293D]"
+                        className="peer sr-only"
                       />
-                      <span className="text-primary text-sm font-medium">
+                      <div className="p-3 rounded-xl border border-gray-200 text-center text-sm font-medium text-gray-500 peer-checked:border-primary peer-checked:bg-primary/5 peer-checked:text-primary transition">
                         Recurring Event
-                      </span>
+                      </div>
                     </label>
                   </div>
                   <FormError name="eventType" />
                 </div>
-              </div>
 
-              <div className="md:flex gap-4 pt-2">
-                <label className="w-40 text-right whitespace-nowrap text-sm font-normal text-primary">
-                  Session(s) <span className="text-red-500 font-bold">*</span>
-                </label>
-                <div>
-                  <label className="text-sm text-primary">
-                    Start Date <span className="text-red-500 font-bold">*</span>
-                  </label>
-                  <Field
-                    name="eventSession"
-                    type="date"
-                    className="input flex-1"
-                    placeholder="Enter name of your event"
-                  />
-                  <FormError name="eventSession" />
-                </div>
-                <div>
-                  <label className="text-sm text-primary">
-                    Start Time <span className="text-red-500 font-bold">*</span>
-                  </label>
-                  <Field
-                    name="eventStarttime"
-                    type="time"
-                    className="input flex-1"
-                    placeholder="Enter name of your event"
-                  />
-                  <FormError name="eventStarttime" />
-                </div>
-                <div>
-                  <label className="text-sm text-primary">End Time</label>
-                  <Field
-                    name="eventEndtime"
-                    type="time"
-                    className="input flex-1"
-                    placeholder="Enter name of your event"
-                  />
-                  <FormError name="eventEndtime" />
-                </div>
-              </div>
-
-              <div className="pt-4">
-                <h4 className="text-lg text-primary md:pl-44 pb-1 font-medium">
-                  Address
-                </h4>
-                <div className="md:flex items-center gap-4">
-                  <label className="w-40 text-right text-sm font-normal text-primary">
-                    Where will your event take place
-                    <span className="text-red-500 font-bold">*</span>
-                  </label>
-                  <div className="w-full md:flex-1">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="space-y-1">
+                    <label className="text-xs font-medium text-gray-500">
+                      Start Date <span className="text-red-500">*</span>
+                    </label>
                     <Field
-                      name="eventAddress"
-                      type="text"
+                      name="eventSession"
+                      type="date"
                       className="input"
-                      placeholder="Enter your event address location"
                     />
-                    <FormError name="eventAddress" />
+                    <FormError name="eventSession" />
                   </div>
-                </div>
-              </div>
-
-              <div className="pt-4">
-                <h4 className="text-lg text-primary md:pl-44 pb-1 font-medium">
-                  Summary
-                </h4>
-                <div className="md:flex gap-4">
-                  <label className="w-40 text-right text-sm font-normal text-primary">
-                    Event Description
-                    <span className="text-red-500 font-bold">*</span>
-                  </label>
-                  <div className="flex-1 resize-none">
+                  <div className="space-y-1">
+                    <label className="text-xs font-medium text-gray-500">
+                      Start Time <span className="text-red-500">*</span>
+                    </label>
                     <Field
-                      as="textarea"
-                      name="eventDescription"
-                      className="input h-28"
-                      placeholder="Describe the event in detail..."
+                      name="eventStarttime"
+                      type="time"
+                      className="input"
                     />
-                    <FormError name="eventDescription" />
+                    <FormError name="eventStarttime" />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-xs font-medium text-gray-500">
+                      End Time
+                    </label>
+                    <Field
+                      name="eventEndtime"
+                      type="time"
+                      className="input"
+                    />
+                    <FormError name="eventEndtime" />
                   </div>
                 </div>
               </div>
 
-              <div className="flex justify-end pt-2">
+              <div className="bg-white rounded-2xl border border-gray-100 p-5 space-y-4">
+                <h4 className="text-sm font-semibold text-primary uppercase tracking-wide flex items-center gap-2">
+                  <MdLocationOn className="text-lg" />
+                  Location
+                </h4>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-medium text-gray-500">
+                    Event Address <span className="text-red-500">*</span>
+                  </label>
+                  <Field
+                    name="eventAddress"
+                    type="text"
+                    className="input"
+                    placeholder="Enter your event address location"
+                  />
+                  <FormError name="eventAddress" />
+                </div>
+              </div>
+
+              <div className="bg-white rounded-2xl border border-gray-100 p-5 space-y-4">
+                <h4 className="text-sm font-semibold text-primary uppercase tracking-wide flex items-center gap-2">
+                  <MdDescription className="text-lg" />
+                  Description
+                </h4>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-medium text-gray-500">
+                    Event Description <span className="text-red-500">*</span>
+                  </label>
+                  <Field
+                    as="textarea"
+                    name="eventDescription"
+                    className="input h-28 resize-none"
+                    placeholder="Describe the event in detail..."
+                  />
+                  <FormError name="eventDescription" />
+                </div>
+              </div>
+
+              <div className="flex justify-end pt-1">
                 <button
                   type="submit"
                   disabled={disabled}
-                  className="btn btn-primary font-bold"
+                  className="btn btn-primary font-bold px-8"
                 >
                   Continue
                 </button>

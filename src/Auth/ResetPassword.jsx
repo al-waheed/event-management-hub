@@ -11,7 +11,7 @@ const validationSchema = Yup.object().shape({
 });
 
 const actionCodeSettings = {
-  url: "https://eventmanagementhub.netlify.app",
+  url: "https://eventcloud.netlify.app",
   handleCodeInApp: false,
 };
 

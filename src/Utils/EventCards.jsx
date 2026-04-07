@@ -1,57 +1,111 @@
-import { FaRegStar } from "react-icons/fa";
+import { FaRegStar, FaUsers } from "react-icons/fa";
+import {
+  MdAccessTime,
+  MdLocationOn,
+  MdOutlinePublic,
+  MdLock,
+} from "react-icons/md";
 import { useUserData } from "../queries/DataQueries";
 
-const EventCard = ({ event, onStarClick }) => {
+const EventCard = ({ event, onStarClick, onCardClick }) => {
   const { data: userData } = useUserData();
 
   const date = new Date(event.eventSession);
   const month = date.toLocaleString("en-US", { month: "short" }).toUpperCase();
   const day = date.getDate();
+  const attendees = event.invites?.length || 0;
+  const isPrivate = event.eventVisibility === "private";
 
   return (
-    <div className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition duration-300 relative border">
-      <div className="relative">
+    <div
+      className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer border border-gray-100"
+      onClick={() => onCardClick && onCardClick(event)}
+    >
+      <div className="relative h-40">
         <img
           src={event.eventBanner}
           alt={event.eventTitle}
-          className="w-full h-44 object-cover"
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
-        <span className="absolute bottom-0 capitalize bg-yellow text-primary text-xs font-medium px-3 py-1 rounded-tr-md">
-          {event.eventCategory}
-        </span>
-        {userData.id === event.createdBy ? (
-          <button
-            className="absolute top-2 right-2 bg-white p-2 rounded-full shadow hover:bg-yellow transition"
-            onClick={() => onStarClick && onStarClick(event)}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+
+        <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5">
+          <span
+            className={`text-[10px] font-semibold px-2 py-0.5 rounded-full backdrop-blur-sm flex items-center gap-1 ${
+              isPrivate
+                ? "bg-red-500/80 text-white"
+                : "bg-green-500/80 text-white"
+            }`}
           >
-            <FaRegStar className="text-primary text-lg hover:bg-yellow" />
-          </button>
-        ) : null}
-      </div>
-      <div className="flex gap-3 p-4">
-        <div className="text-center">
-          <p className="text-sm font-bold text-indigo-700">{month}</p>
-          <p className="text-xl font-bold text-primary">{day}</p>
+            {isPrivate ? (
+              <>
+                <MdLock className="text-[10px]" /> Private
+              </>
+            ) : (
+              <>
+                <MdOutlinePublic className="text-[10px]" /> Public
+              </>
+            )}
+          </span>
+          <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-white/20 backdrop-blur-sm text-white capitalize">
+            {event.eventCategory}
+          </span>
         </div>
-        <div className="flex-1">
-          <h2 className="text-base font-semibold text-primary mb-1 line-clamp-1">
-            {event.eventTitle}
-          </h2>
-          <h2 className="text-sm font-medium capitalize text-primary mb-1 line-clamp-1">
-            {event.eventDescription}
-          </h2>
-          <p className="text-sm text-gray-600 line-clamp-1">
-            {event.eventAddress}
+
+        {userData?.id === event.createdBy && (
+          <button
+            className="absolute top-2.5 right-2.5 bg-white/90 backdrop-blur-sm p-1.5 rounded-full shadow-sm hover:bg-yellow transition"
+            onClick={(e) => {
+              e.stopPropagation();
+              onStarClick && onStarClick(event);
+            }}
+          >
+            <FaRegStar className="text-primary text-sm" />
+          </button>
+        )}
+
+        <div className="absolute bottom-2.5 left-2.5 bg-white/90 backdrop-blur-sm rounded-lg px-2.5 py-1.5 text-center leading-none">
+          <p className="text-[10px] font-bold text-primary/60 uppercase">
+            {month}
           </p>
-          <p className="text-xs text-gray-500 mt-1">
-            {event.eventStarttime} - {event.eventEndtime}
-          </p>
-          <div className="flex items-center text-xs text-gray-500 mt-1">
-            <span className="mr-1">🎟️</span>
-            <span>FREE</span>
-            <span className="mx-1">•</span>
-            <span>⭐ 10 interested</span>
+          <p className="text-lg font-bold text-primary leading-none">{day}</p>
+        </div>
+      </div>
+
+      <div className="p-3.5 space-y-2">
+        <h2 className="text-sm font-bold text-primary line-clamp-1 leading-snug">
+          {event.eventTitle}
+        </h2>
+        <p className="text-xs text-gray-500 line-clamp-1">
+          {event.eventDescription}
+        </p>
+
+        <div className="flex items-center gap-1.5 text-xs text-gray-400">
+          <MdLocationOn className="text-sm text-primary/50 flex-shrink-0" />
+          <span className="line-clamp-1">{event.eventAddress}</span>
+        </div>
+
+        <div className="flex items-center gap-1.5 text-xs text-gray-400">
+          <MdAccessTime className="text-sm text-primary/50 flex-shrink-0" />
+          <span>
+            {event.eventStarttime}
+            {event.eventEndtime ? ` - ${event.eventEndtime}` : ""}
+          </span>
+        </div>
+
+        <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+          <div className="flex items-center gap-1.5 text-xs text-gray-400">
+            <FaUsers className="text-primary/50" />
+            <span>
+              <strong className="text-primary font-semibold">
+                {attendees}
+              </strong>{" "}
+              {attendees === 1 ? "attendee" : "attendees"}
+            </span>
           </div>
+          <span className="text-[10px] font-semibold text-primary/40 uppercase tracking-wide group-hover:text-primary transition">
+            View Details
+          </span>
         </div>
       </div>
     </div>

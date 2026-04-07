@@ -2,36 +2,35 @@ import { useState } from "react";
 import MyCreatedEvents from "./MyCreatedEvents";
 import AttendingEvents from "./AttendingEvents";
 
-const tabs = ["My Created Events", "Event I'm Attending"];
+const tabs = ["My Created Events", "Events I'm Attending"];
 
-const EventLists = ({ userEvents }) => {
+const EventLists = ({ userEvents, attendingEvents }) => {
   const [activeTab, setActiveTab] = useState(tabs[0]);
 
   return (
     <div>
-      <div className="text-lg font-medium text-center text-primary">
-        <ul className="flex flex-wrap -mb-px pl-4">
-          {tabs.map((tab) => (
-            <li className="me-2" key={tab}>
-              <button
-                onClick={() => setActiveTab(tab)}
-                className={`inline-block pb-2 border-b-2 rounded-t-lg transition-colors duration-200 ${
-                  activeTab === tab
-                    ? "text-primary-hover border-primary-hover font-bold"
-                    : "border-transparent hover:text-primary-hover font-medium"
-                }`}
-              >
-                {tab}
-              </button>
-            </li>
-          ))}
-        </ul>
+      <div className="flex gap-1 bg-gray-100 p-1 rounded-xl">
+        {tabs.map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`flex-1 py-2 px-4 text-sm font-medium rounded-lg transition-all duration-200 ${
+              activeTab === tab
+                ? "bg-white text-primary shadow-sm"
+                : "text-gray-500 hover:text-primary"
+            }`}
+          >
+            {tab}
+          </button>
+        ))}
       </div>
       <div className="mt-4">
         {activeTab === "My Created Events" && (
           <MyCreatedEvents userEvents={userEvents} />
         )}
-        {activeTab === "Event I'm Attending" && <AttendingEvents />}
+        {activeTab === "Events I'm Attending" && (
+          <AttendingEvents attendingEvents={attendingEvents} />
+        )}
       </div>
     </div>
   );
