@@ -1,13 +1,10 @@
 import { useState } from "react";
 import * as Yup from "yup";
 import { Formik, Form, Field } from "formik";
-import { ref, uploadString, getDownloadURL } from "firebase/storage";
-import { storage } from "../../Auth/Firebase";
 import { formatApiError, FormError } from "../../Utils/EventUtils";
 import { BsCloudArrowUp } from "react-icons/bs";
 import { MdImage, MdOutlinePublic, MdLock } from "react-icons/md";
 import { toast } from "react-toastify";
-import { v4 as uuidv4 } from "uuid";
 
 const bannerSizeLimit = 5 * 1024 * 1024; // 5 MB
 
@@ -34,38 +31,55 @@ const UploadEventImage = ({
       .required("Please select event visibility"),
   });
 
-  const handleBannerUpload = (e, setFieldValue) => {
+  const handleBannerUpload = async (e, setFieldValue) => {
     const file = e.target.files[0];
-    if (!file.type.startsWith("image/")) {
+
+    if (!file || !file.type.startsWith("image/")) {
       toast.error("Please upload a valid image");
       return;
     }
 
     if (file.size > bannerSizeLimit) {
-      toast.error("File must not exceeds 5MB");
+      toast.error("File must not exceed 5MB");
       return;
     }
+
     const previewBanner = URL.createObjectURL(file);
     setPreviewUrl(previewBanner);
-    setFieldValue("eventBanner", previewBanner);
     setIsUploading(true);
-    const bannerId = uuidv4();
-    const bannerRef = ref(storage, `eventBanners/${bannerId}_${file.name}`);
-    const reader = new FileReader();
-    reader.onloadend = async () => {
-      try {
-        await uploadString(bannerRef, reader.result, "data_url");
-        const bannerURL = await getDownloadURL(bannerRef);
-        setFieldValue("eventBanner", bannerURL);
-        updateEventData({ eventBanner: bannerURL });
-        toast.success("Image uploaded!");
-      } catch (e) {
-        setError(e.message);
-      } finally {
-        setIsUploading(false);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", "event_banner_upload");
+      formData.append("folder", "eventBanners");
+
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`,
+        {
+          method: "POST",
+          body: formData,
+        },
+      );
+
+      const data = await res.json();
+      console.log("Cloudinary response:", data);
+
+      if (!data.secure_url) {
+        throw new Error(data.error?.message || "Upload failed");
       }
-    };
-    reader.readAsDataURL(file);
+
+      setFieldValue("eventBanner", data.secure_url);
+      updateEventData({ eventBanner: data.secure_url });
+
+      toast.success("Image uploaded!");
+    } catch (err) {
+      console.error(err);
+      setError(err.message);
+      toast.error("Upload failed: " + err.message);
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const handleUpdateData = (values) => {
@@ -79,7 +93,7 @@ const UploadEventImage = ({
     };
     localStorage.setItem(
       "eventData",
-      JSON.stringify({ ...eventData, ...finalValues })
+      JSON.stringify({ ...eventData, ...finalValues }),
     );
     updateEventData(finalValues);
     nextStep();
@@ -96,7 +110,8 @@ const UploadEventImage = ({
         onSubmit={handleUpdateData}
       >
         {({ values, setFieldValue }) => {
-          const disabled = !values.eventBanner || !values.eventVisibility;
+          const disabled =
+            !values.eventBanner || !values.eventVisibility || isUploading;
 
           return (
             <Form className="mt-8 max-w-2xl mx-auto space-y-5">
@@ -121,7 +136,7 @@ const UploadEventImage = ({
                     }}
                   />
 
-                  {(previewUrl || values.eventBanner) ? (
+                  {previewUrl || values.eventBanner ? (
                     <div className="relative group">
                       <img
                         src={previewUrl || values.eventBanner}
@@ -222,7 +237,7 @@ const UploadEventImage = ({
                   disabled={disabled}
                   className="btn btn-primary font-bold px-8"
                 >
-                  Continue
+                  {isUploading ? "Uploading..." : "Continue"}
                 </button>
               </div>
             </Form>

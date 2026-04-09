@@ -43,7 +43,7 @@ export const useUsersEventData = () => {
     queryKey: ["userEvents", uid],
     enabled: !!uid,
     queryFn: async () => {
-       if(!uid) return [];
+      if (!uid) return [];
       const event = query(
         collection(db, "events"),
         where("createdBy", "==", uid),
@@ -58,32 +58,102 @@ export const useUsersEventData = () => {
   });
 };
 
-export const useAttendingEventsData = () => {
+
+export const useUserInvitesData = () => {
   const uid = auth.currentUser?.uid;
+
   return useQuery({
-    queryKey: ["attendingEvents", uid],
+    queryKey: ["userInvites", uid],
     enabled: !!uid,
     queryFn: async () => {
       if (!uid) return [];
+
+      // 🔹 Get current user
       const userSnap = await getDoc(doc(db, "users", uid));
       if (!userSnap.exists()) return [];
+
       const userEmail = userSnap.data().email?.toLowerCase();
       if (!userEmail) return [];
 
-      const allEventsQuery = query(
+      // 🔹 Get events created by this user
+      const eventsQuery = query(
         collection(db, "events"),
-        orderBy("createdAt", "desc"),
+        where("createdBy", "==", uid),
       );
-      const snapshot = await getDocs(allEventsQuery);
-      return snapshot.docs
-        .map((doc) => ({ id: doc.id, ...doc.data() }))
-        .filter(
-          (event) =>
-            event.createdBy !== uid &&
-            (event.invites || []).some(
-              (inv) => inv.email?.toLowerCase() === userEmail
-            )
-        );
+
+      const eventSnap = await getDocs(eventsQuery);
+      const eventIds = eventSnap.docs.map((doc) => doc.id);
+
+      if (eventIds.length === 0) return [];
+
+      // 🔹 Get invites for those events
+      const invitesQuery = query(
+        collection(db, "invites"),
+        where("eventId", "in", eventIds),
+      );
+
+      const inviteSnap = await getDocs(invitesQuery);
+
+      return inviteSnap.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+    },
+  });
+};
+
+export const useAttendingEventsData = () => {
+  const uid = auth.currentUser?.uid;
+
+  return useQuery({
+    queryKey: ["attendingEvents", uid],
+    enabled: !!uid,
+
+    queryFn: async () => {
+      if (!uid) return [];
+
+      // 🔹 STEP 1: Get current user data (same as before)
+      const userSnap = await getDoc(doc(db, "users", uid));
+      if (!userSnap.exists()) return [];
+
+      const userEmail = userSnap.data().email?.toLowerCase();
+      if (!userEmail) return [];
+      const invitesQuery = query(
+        collection(db, "invites"),
+        where("email", "==", userEmail),
+
+        // 🔸 Optional: only show accepted invites
+        // remove this line if you want pending too
+        where("status", "==", "accepted"),
+      );
+
+      const inviteSnap = await getDocs(invitesQuery);
+
+      if (inviteSnap.empty) return [];
+
+      // 🔹 STEP 3: Extract eventIds from invites
+      const eventIds = inviteSnap.docs.map((doc) => doc.data().eventId);
+
+      // 🔹 STEP 4: Fetch each event using eventId
+      const events = await Promise.all(
+        eventIds.map(async (eventId) => {
+          const eventSnap = await getDoc(doc(db, "events", eventId));
+
+          if (!eventSnap.exists()) return null;
+
+          return {
+            id: eventSnap.id,
+            ...eventSnap.data(),
+          };
+        }),
+      );
+
+      // 🔹 STEP 5: Clean result
+      return events.filter(
+        (event) =>
+          event && // remove nulls
+          event.createdBy !== uid, // exclude user's own events
+      );
     },
   });
 };

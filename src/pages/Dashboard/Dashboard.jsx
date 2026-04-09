@@ -20,10 +20,7 @@ const Dashboard = () => {
   const { data: userEvents } = useUsersEventData();
   const { data: attendingEvents } = useAttendingEventsData();
 
-  const totalInvites = (userEvents || []).reduce(
-    (sum, e) => sum + (e.invites?.length || 0),
-    0,
-  );
+  const totalInvites = attendingEvents?.length || 0;
 
   if (isLoading) {
     return (

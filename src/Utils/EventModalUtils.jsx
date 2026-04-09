@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   MdOutlineDateRange,
   MdAccessTime,
@@ -13,7 +13,14 @@ import EventAttendees from "./EventAttendees";
 import InviteUserModal from "../modal/InviteUserModal";
 import { useUserData, useUserDataById } from "../queries/DataQueries";
 import { auth, db } from "../Auth/Firebase";
-import { doc, updateDoc, Timestamp } from "firebase/firestore";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  addDoc,
+  Timestamp,
+} from "firebase/firestore";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 
@@ -32,6 +39,7 @@ const EventModalUtils = (props) => {
     invitedUsers,
   } = props;
 
+  const [invites, setInvites] = useState([]);
   const [viewAttendees, setViewAttendees] = useState(false);
   const [openInviteModal, setOpenInviteModal] = useState(false);
   const [isJoining, setIsJoining] = useState(false);
@@ -42,10 +50,13 @@ const EventModalUtils = (props) => {
   const currentUid = auth.currentUser?.uid;
   const isCreator = currentUid === invitedUsers?.createdBy;
   const isPublic = Visibility !== "private";
-  const alreadyJoined = (invitedUsers?.invites || []).some(
-    (inv) => inv.email === currentUser?.email
+
+  // ✅ FIX: make email comparison safe (case insensitive)
+  const alreadyJoined = invites.some(
+    (inv) => inv.email?.toLowerCase() === currentUser?.email?.toLowerCase(),
   );
-  const attendeeCount = invitedUsers?.invites?.length || 0;
+
+  const attendeeCount = invites?.length;
 
   const mapQuery = encodeURIComponent(Address || "");
 
@@ -53,23 +64,68 @@ const EventModalUtils = (props) => {
     setOpenInviteModal(!openInviteModal);
   };
 
+  // ✅ GOOD: fetching invites
+  useEffect(() => {
+    const fetchInvites = async () => {
+      if (!invitedUsers?.id) return;
+
+      const q = query(
+        collection(db, "invites"),
+        where("eventId", "==", invitedUsers.id),
+      );
+
+      const snap = await getDocs(q);
+
+      setInvites(
+        snap.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })),
+      );
+    };
+
+    fetchInvites();
+  }, [invitedUsers?.id]);
+
   const handleJoinEvent = async () => {
     if (!currentUser?.email || !invitedUsers?.id) return;
     setIsJoining(true);
+
     try {
-      const newInvite = {
+      const alreadyExists = invites.some(
+        (inv) => inv.email?.toLowerCase() === currentUser.email?.toLowerCase(),
+      );
+
+      if (alreadyExists) {
+        toast.info("You already joined this event");
+        return;
+      }
+
+      await addDoc(collection(db, "invites"), {
+        eventId: invitedUsers.id,
         email: currentUser.email,
         status: "accepted",
         invitedAt: Timestamp.now(),
-      };
-      const updatedInvites = [
-        ...(invitedUsers.invites || []),
-        newInvite,
-      ];
-      const ref = doc(db, "events", invitedUsers.id);
-      await updateDoc(ref, { invites: updatedInvites });
-      await queryClient.invalidateQueries({ queryKey: ["userEvents"] });
-      await queryClient.invalidateQueries({ queryKey: ["allEvents"] });
+      });
+
+      // ❗ FIX: manually refetch invites (since you're not using React Query here)
+      const q = query(
+        collection(db, "invites"),
+        where("eventId", "==", invitedUsers.id),
+      );
+
+      const snap = await getDocs(q);
+
+      setInvites(
+        snap.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })),
+      );
+
+      // ❗ REMOVE: this does nothing for invites UI
+      // await queryClient.invalidateQueries({ queryKey: ["invites", invitedUsers.id] });
+
       toast.success("You have joined this event!");
     } catch (e) {
       toast.error("Failed to join event: " + e.message);
@@ -216,15 +272,15 @@ const EventModalUtils = (props) => {
             </h4>
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center text-lg font-bold flex-shrink-0">
-                {fullname?.charAt(0).toUpperCase()}
+                {hostUser?.fullname?.charAt(0).toUpperCase() || Morenikeji}
               </div>
               <div className="min-w-0">
                 <p className="text-primary font-semibold text-sm truncate">
-                  {fullname}
+                  {hostUser?.fullname}
                 </p>
                 <div className="flex items-center gap-1 text-xs text-gray-400">
                   <FaRegEnvelope className="text-[10px]" />
-                  <span>{email}</span>
+                  <span>{hostUser?.email}</span>
                 </div>
               </div>
             </div>
@@ -241,7 +297,7 @@ const EventModalUtils = (props) => {
           </div>
 
           <div className="flex items-center gap-2">
-            {invitedUsers?.invites?.length > 0 && (
+            {invites?.length > 0 && (
               <button
                 onClick={() => setViewAttendees(!viewAttendees)}
                 className="px-3 py-1.5 text-sm font-medium border border-primary text-primary rounded-lg hover:bg-gray-50 transition"
