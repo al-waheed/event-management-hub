@@ -13,14 +13,16 @@ import {
   useUserData,
   useUsersEventData,
   useAttendingEventsData,
+  useUserInvitesData,
 } from "../../queries/DataQueries";
 
 const Dashboard = () => {
   const { data: userData, isLoading } = useUserData();
   const { data: userEvents } = useUsersEventData();
   const { data: attendingEvents } = useAttendingEventsData();
+  const { data: userInvites } = useUserInvitesData();
 
-  const totalInvites = attendingEvents?.length || 0;
+  const totalInvites = userInvites?.length || 0;
 
   if (isLoading) {
     return (
@@ -97,7 +99,11 @@ const Dashboard = () => {
         </button>
       </NavLink>
 
-      <EventLists userEvents={userEvents} attendingEvents={attendingEvents} />
+      <EventLists
+        userEvents={userEvents}
+        attendingEvents={attendingEvents}
+        totalInvites={totalInvites}
+      />
     </div>
   );
 };

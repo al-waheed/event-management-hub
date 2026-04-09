@@ -37,71 +37,25 @@ const InviteUserModal = ({ openInviteModal, toggleModal, event }) => {
   const queryClient = useQueryClient();
   const [error, setError] = useState("");
 
-  // const handleInviteUser = async (values, { resetForm, setSubmitting }) => {
-  //   setError("");
-  //   setSubmitting(true);
-
-  //   const existingEmails = (event?.invites || []).map((inv) =>
-  //     inv.email.toLowerCase(),
-  //   );
-  //   const duplicates = values.emails.filter((email) =>
-  //     existingEmails.includes(email.toLowerCase()),
-  //   );
-
-  //   if (duplicates.length > 0) {
-  //     setError(`Already invited: ${duplicates.join(", ")}`);
-  //     setSubmitting(false);
-  //     return;
-  //   }
-
-  //   const newInvites = values.emails.map((email) => ({
-  //     email,
-  //     status: "pending",
-  //     invitedAt: Timestamp.now(),
-  //   }));
-
-  //   const updatedInvites = event?.invites
-  //     ? [...event.invites, ...newInvites]
-  //     : newInvites;
-
-  //   try {
-  //     const ref = doc(db, "events", event.id);
-  //     await updateDoc(ref, { invites: updatedInvites });
-
-  //     for (const email of values.emails) {
-  //       await send(
-  //         serviceInviteId,
-  //         templateInviteId,
-  //         {
-  //           to_email: email,
-  //           event_title: event.eventTitle,
-  //           inviter_name: userDetails?.fullname,
-  //           event_date: event.eventDate,
-  //           event_address: event.eventAddress,
-  //         },
-  //         publicKey,
-  //       );
-  //     }
-  //     await queryClient.invalidateQueries({ queryKey: ["userEvents"] });
-  //     await queryClient.invalidateQueries({ queryKey: ["userInvites"] });
-
-  //     toast.success(
-  //       `Invites sent successfully to ${values.emails.length} user(s)!`,
-  //     );
-  //     resetForm();
-  //     toggleModal();
-  //   } catch (err) {
-  //     setError(err.message);
-  //   } finally {
-  //     setSubmitting(false);
-  //   }
-  // };
-
   const handleInviteUser = async (values, { resetForm, setSubmitting }) => {
     setError("");
     setSubmitting(true);
 
     try {
+      if (!event?.id) {
+        setError("Invalid event selected");
+        return;
+      }
+
+      const normalizedEmails = values.emails
+        .map((email) => email.trim().toLowerCase())
+        .filter(Boolean);
+
+      if (!normalizedEmails.length) {
+        setError("Please enter at least one valid email.");
+        return;
+      }
+
       // 🔹 STEP 1: Check existing invites from collection (NOT event.invites)
       const existingQuery = query(
         collection(db, "invites"),
@@ -115,18 +69,20 @@ const InviteUserModal = ({ openInviteModal, toggleModal, event }) => {
       );
 
       // 🔹 STEP 2: Check duplicates
-      const duplicates = values.emails.filter((email) =>
-        existingEmails.includes(email.toLowerCase()),
+      const duplicates = normalizedEmails.filter((email) =>
+        existingEmails.includes(email),
+      );
+      const emailsToInvite = normalizedEmails.filter(
+        (email) => !existingEmails.includes(email),
       );
 
-      if (duplicates.length > 0) {
+      if (!emailsToInvite.length) {
         setError(`Already invited: ${duplicates.join(", ")}`);
-        setSubmitting(false);
         return;
       }
 
       // 🔹 STEP 3: Create invites in collection (IMPORTANT CHANGE)
-      for (const email of values.emails) {
+      for (const email of emailsToInvite) {
         await addDoc(collection(db, "invites"), {
           eventId: event.id, // 🔥 LINK TO EVENT
           email,
@@ -137,7 +93,7 @@ const InviteUserModal = ({ openInviteModal, toggleModal, event }) => {
       }
 
       // 🔹 STEP 4: Send emails (unchanged)
-      for (const email of values.emails) {
+      for (const email of emailsToInvite) {
         await send(
           serviceInviteId,
           templateInviteId,
@@ -157,13 +113,24 @@ const InviteUserModal = ({ openInviteModal, toggleModal, event }) => {
       await queryClient.invalidateQueries({ queryKey: ["userInvites"] });
 
       toast.success(
-        `Invites sent successfully to ${values.emails.length} user(s)!`,
+        `Invites sent successfully to ${emailsToInvite.length} user(s)!`,
       );
+      if (duplicates.length) {
+        toast.info(
+          `${duplicates.length} email(s) skipped because they were already invited.`,
+        );
+      }
 
       resetForm();
       toggleModal();
     } catch (err) {
-      setError(err.message);
+      if (err?.code === "permission-denied") {
+        setError(
+          "Missing or insufficient Firestore permissions for invites. Please update rules for the invites collection.",
+        );
+      } else {
+        setError(err.message);
+      }
     } finally {
       setSubmitting(false);
     }

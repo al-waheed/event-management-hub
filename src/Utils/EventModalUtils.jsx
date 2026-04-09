@@ -21,7 +21,6 @@ import {
   addDoc,
   Timestamp,
 } from "firebase/firestore";
-import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 
 const EventModalUtils = (props) => {
@@ -45,11 +44,11 @@ const EventModalUtils = (props) => {
   const [isJoining, setIsJoining] = useState(false);
   const { data: currentUser } = useUserData();
   const { data: hostUser } = useUserDataById(invitedUsers?.createdBy);
-  const queryClient = useQueryClient();
 
   const currentUid = auth.currentUser?.uid;
   const isCreator = currentUid === invitedUsers?.createdBy;
-  const isPublic = Visibility !== "private";
+  const eventVisibility = invitedUsers?.eventVisibility || Visibility;
+  const isPublic = eventVisibility !== "private";
 
   // ✅ FIX: make email comparison safe (case insensitive)
   const alreadyJoined = invites.some(
@@ -148,12 +147,12 @@ const EventModalUtils = (props) => {
             <div className="flex items-center gap-2 mb-1">
               <span
                 className={`text-[11px] font-semibold px-2.5 py-0.5 rounded-full backdrop-blur-sm ${
-                  Visibility === "private"
+                  eventVisibility === "private"
                     ? "bg-red-500/80 text-white"
                     : "bg-green-500/80 text-white"
                 }`}
               >
-                {Visibility === "private" ? (
+                {eventVisibility === "private" ? (
                   <span className="flex items-center gap-1">
                     <MdLock className="text-xs" /> Private
                   </span>
@@ -179,12 +178,12 @@ const EventModalUtils = (props) => {
           <div className="flex items-center gap-2 mb-1">
             <span
               className={`text-[11px] font-semibold px-2.5 py-0.5 rounded-full ${
-                Visibility === "private"
+                eventVisibility === "private"
                   ? "bg-red-100 text-red-700"
                   : "bg-green-100 text-green-700"
               }`}
             >
-              {Visibility === "private" ? "Private" : "Public"}
+              {eventVisibility === "private" ? "Private" : "Public"}
             </span>
             <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-gray-100 text-gray-600 capitalize">
               {Category}
@@ -247,7 +246,7 @@ const EventModalUtils = (props) => {
                 style={{ border: 0 }}
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
-                src={`https://www.openstreetmap.org/export/embed.html?bbox=&layer=mapnik&marker=&query=${mapQuery}`}
+                src={`https://maps.google.com/maps?q=${mapQuery}&t=&z=13&ie=UTF8&iwloc=&output=embed`}
                 allowFullScreen
               />
             </div>
@@ -272,7 +271,7 @@ const EventModalUtils = (props) => {
             </h4>
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center text-lg font-bold flex-shrink-0">
-                {hostUser?.fullname?.charAt(0).toUpperCase() || Morenikeji}
+                {hostUser?.fullname?.charAt(0)?.toUpperCase() || "M"}
               </div>
               <div className="min-w-0">
                 <p className="text-primary font-semibold text-sm truncate">
@@ -339,7 +338,7 @@ const EventModalUtils = (props) => {
           </div>
         </div>
 
-        {viewAttendees && <EventAttendees event={invitedUsers} />}
+        {viewAttendees && <EventAttendees invites={invites} />}
 
         {isCreator && (
           <InviteUserModal

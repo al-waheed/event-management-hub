@@ -1,7 +1,14 @@
 import { format } from "date-fns";
 
-const EventAttendees = ({ event }) => {
-  const invites = event?.invites || [];
+const EventAttendees = ({ invites = [] }) => {
+  if (!invites.length) {
+    return (
+      <div className="mt-6">
+        <h4 className="font-semibold mb-3 text-primary">Event Invites</h4>
+        <p className="text-sm text-gray-500">No attendees yet for this event.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="mt-6">
@@ -25,10 +32,9 @@ const EventAttendees = ({ event }) => {
                 </td>
 
                 <td className="px-4 py-3 text-gray-600">
-                  {format(
-                    new Date(invite.invitedAt?.seconds * 1000),
-                    "dd MMM yyyy",
-                  )}
+                  {invite.invitedAt?.seconds
+                    ? format(new Date(invite.invitedAt.seconds * 1000), "dd MMM yyyy")
+                    : "-"}
                 </td>
 
                 <td className="px-4 py-3 rounded-r-md">

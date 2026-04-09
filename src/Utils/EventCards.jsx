@@ -13,7 +13,7 @@ const EventCard = ({ event, onStarClick, onCardClick }) => {
   const date = new Date(event.eventSession);
   const month = date.toLocaleString("en-US", { month: "short" }).toUpperCase();
   const day = date.getDate();
-  const attendees = event.invites?.length || 0;
+  const attendees = event?.attendeeCount ?? event?.invites?.length ?? 0;
   const isPrivate = event.eventVisibility === "private";
 
   return (

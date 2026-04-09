@@ -10,6 +10,25 @@ import {
   orderBy,
 } from "firebase/firestore";
 
+const withAttendeeCount = async (event) => {
+  try {
+    const invitesQuery = query(
+      collection(db, "invites"),
+      where("eventId", "==", event.id),
+    );
+    const invitesSnapshot = await getDocs(invitesQuery);
+    return {
+      ...event,
+      attendeeCount: invitesSnapshot.size,
+    };
+  } catch {
+    return {
+      ...event,
+      attendeeCount: event.invites?.length || 0,
+    };
+  }
+};
+
 export const useUserData = () => {
   const uid = auth.currentUser?.uid;
   return useQuery({
@@ -50,10 +69,11 @@ export const useUsersEventData = () => {
         orderBy("createdAt", "desc"),
       );
       const snapshot = await getDocs(event);
-      return snapshot.docs.map((doc) => ({
+      const events = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
+      return Promise.all(events.map(withAttendeeCount));
     },
   });
 };
@@ -149,11 +169,12 @@ export const useAttendingEventsData = () => {
       );
 
       // 🔹 STEP 5: Clean result
-      return events.filter(
+      const filteredEvents = events.filter(
         (event) =>
           event && // remove nulls
           event.createdBy !== uid, // exclude user's own events
       );
+      return Promise.all(filteredEvents.map(withAttendeeCount));
     },
   });
 };
@@ -167,11 +188,11 @@ export const useAllEventsData = () => {
         orderBy("createdAt", "desc"),
       );
       const snapshot = await getDocs(allEvent);
-      let allEvents = snapshot.docs.map((doc) => ({
+      const allEvents = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
-      return allEvents;
+      return Promise.all(allEvents.map(withAttendeeCount));
     },
   });
 };

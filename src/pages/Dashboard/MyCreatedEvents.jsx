@@ -30,7 +30,7 @@ const MyCreatedEvents = ({ userEvents }) => {
             year: "numeric",
           });
           const isPrivate = event.eventVisibility === "private";
-          const attendees = event.invites?.length || 0;
+          const attendees = event.attendeeCount ?? event.invites?.length ?? 0;
 
           return (
             <div
